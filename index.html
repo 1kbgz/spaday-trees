@@ -257,29 +257,55 @@
 <p><code class="docutils literal notranslate"><span class="pre">spaday-trees</span></code> wraps Pierre’s imperative <code class="docutils literal notranslate"><span class="pre">FileTree</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> custom element and exposes it
 as the Python <code class="docutils literal notranslate"><span class="pre">Tree</span></code> component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based <code class="docutils literal notranslate"><span class="pre">selection-change</span></code> / <code class="docutils literal notranslate"><span class="pre">search-change</span></code> events.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday.backends.starlette</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve</span>
+</section>
+<section id="interactive-example">
+<h2>Interactive example<a class="headerlink" href="#interactive-example" title="Link to this heading">¶</a></h2>
+<p>This app filters the tree as you type. The button changes its selected path through spaday’s reactive
+store; selecting and expanding nodes in the tree remains client-side.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetField</span><span class="p">,</span> <span class="n">element</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spaday.backends.starlette</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">spaday_trees</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tree</span>
 
-<span class="n">page</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span>
-    <span class="n">paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;src/index.ts&quot;</span><span class="p">,</span> <span class="s2">&quot;src/app.py&quot;</span><span class="p">,</span> <span class="s2">&quot;README.md&quot;</span><span class="p">],</span>
-    <span class="n">selected_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;src/app.py&quot;</span><span class="p">],</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;src/app.py&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;src/components/tree.py&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tests/test_app.py&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;selected_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;selected&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="s2">&quot;22rem&quot;</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">serve</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trees&quot;</span><span class="p">])</span>
+<span class="n">page</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">element</span><span class="p">(</span><span class="s2">&quot;main&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="s2">&quot;42rem&quot;</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="s2">&quot;2rem auto&quot;</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;system-ui&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">element</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;Project files&quot;</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">child</span><span class="p">(</span>
+        <span class="n">element</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Filter files…&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;two-way&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;0.6rem&quot;</span><span class="p">,</span> <span class="n">margin_bottom</span><span class="o">=</span><span class="s2">&quot;0.75rem&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">element</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;Select README&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="n">SetField</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">])))</span>
+    <span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">serve</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trees&quot;</span><span class="p">],</span> <span class="n">store</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;selected&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 </pre></div>
 </div>
+<p>Save this as <code class="docutils literal notranslate"><span class="pre">app.py</span></code>, then run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">spaday-trees</span> <span class="pre">starlette</span> <span class="pre">uvicorn</span></code> and
+<code class="docutils literal notranslate"><span class="pre">uvicorn</span> <span class="pre">app:app</span></code>. Open <a class="reference external" href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
 <p>Installing this project registers the <code class="docutils literal notranslate"><span class="pre">trees</span></code> entry point with spaday. The equivalent explicit forms
 are <code class="docutils literal notranslate"><span class="pre">packages=[spaday_trees.package]</span></code> and <code class="docutils literal notranslate"><span class="pre">packages=[&quot;spaday_trees:package&quot;]</span></code>.</p>
 <p>The integration pins <code class="docutils literal notranslate"><span class="pre">&#64;pierre/trees</span></code> <code class="docutils literal notranslate"><span class="pre">1.0.0-beta.5</span></code>. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.</p>
-</section>
-<section id="development">
-<h2>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>develop
-make<span class="w"> </span>build
-make<span class="w"> </span><span class="nb">test</span>
-make<span class="w"> </span>lint
-</pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>
 </div>
 </section>
 </section>

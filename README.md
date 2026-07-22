@@ -13,17 +13,49 @@
 as the Python `Tree` component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based `selection-change` / `search-change` events.
 
+## Interactive example
+
+This app filters the tree as you type. The button changes its selected path through spaday's reactive
+store; selecting and expanding nodes in the tree remains client-side.
+
 ```python
+from spaday import SetField, element
 from spaday.backends.starlette import serve
 from spaday_trees import Tree
 
-page = Tree(
-    paths=["src/index.ts", "src/app.py", "README.md"],
-    selected_paths=["src/app.py"],
+paths = [
+    "README.md",
+    "pyproject.toml",
+    "src/app.py",
+    "src/components/tree.py",
+    "tests/test_app.py",
+]
+
+tree = (
+    Tree(paths=paths)
+    .bind("search", "query")
+    .bind("selected_paths", "selected")
+    .style(height="22rem")
 )
 
-app = serve(page, packages=["trees"])
+page = (
+    element("main")
+    .style(max_width="42rem", margin="2rem auto", font_family="system-ui")
+    .child(element("h1").text("Project files"))
+    .child(
+        element("input", type="search", placeholder="Filter files…")
+        .bind("value", "query", mode="two-way")
+        .style(width="100%", padding="0.6rem", margin_bottom="0.75rem")
+    )
+    .child(element("button").text("Select README").on("click", SetField("selected", ["README.md"])))
+    .child(tree)
+)
+
+app = serve(page, packages=["trees"], store={"query": "", "selected": []})
 ```
+
+Save this as `app.py`, then run `pip install spaday-trees starlette uvicorn` and
+`uvicorn app:app`. Open <http://127.0.0.1:8000>.
 
 Installing this project registers the `trees` entry point with spaday. The equivalent explicit forms
 are `packages=[spaday_trees.package]` and `packages=["spaday_trees:package"]`.

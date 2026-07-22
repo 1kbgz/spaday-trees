@@ -31,11 +31,5 @@ are `packages=[spaday_trees.package]` and `packages=["spaday_trees:package"]`.
 The integration pins `@pierre/trees` `1.0.0-beta.5`. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.
 
-## Development
-
-```bash
-make develop
-make build
-make test
-make lint
-```
+> [!NOTE]
+> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

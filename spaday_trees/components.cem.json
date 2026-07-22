@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "modules": [
+    {
+      "path": "src/ts/index.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "Tree",
+          "customElement": true,
+          "tagName": "spaday-tree",
+          "summary": "Pierre Trees file tree with serializable paths, selection, search, and Git status.",
+          "attributes": [
+            { "name": "paths", "type": { "text": "string[]" } },
+            { "name": "selected_paths", "type": { "text": "string[]" } },
+            { "name": "search", "type": { "text": "string | null" } },
+            { "name": "git_status", "type": { "text": "unknown" } }
+          ],
+          "events": [
+            { "name": "selection-change", "type": { "text": "CustomEvent<{ paths: string[] }>" } },
+            { "name": "search-change", "type": { "text": "CustomEvent<{ value: string | null }>" } }
+          ],
+          "slots": []
+        }
+      ]
+    }
+  ]
+}

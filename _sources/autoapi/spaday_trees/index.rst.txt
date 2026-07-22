@@ -1,0 +1,21 @@
+spaday_trees
+============
+
+.. py:module:: spaday_trees
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   spaday_trees.__version__
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   :value: '0.1.0'
+
+

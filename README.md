@@ -9,9 +9,6 @@
 
 ## Overview
 
-> [!NOTE]
-> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
-
 `spaday-trees` wraps Pierre's imperative `FileTree` in a `<spaday-tree>` custom element and exposes it
 as the Python `Tree` component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based `selection-change` / `search-change` events.
@@ -33,3 +30,6 @@ are `packages=[spaday_trees.package]` and `packages=["spaday_trees:package"]`.
 
 The integration pins `@pierre/trees` `1.0.0-beta.5`. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.
+
+> [!NOTE]
+> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

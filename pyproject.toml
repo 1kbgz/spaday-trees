@@ -29,7 +29,12 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
-dependencies = []
+dependencies = [
+    "spaday>=0.3.0",
+]
+
+[project.entry-points."spaday.component_packages"]
+trees = "spaday_trees:package"
 
 [project.optional-dependencies]
 develop = [
@@ -166,4 +171,3 @@ title = "spaday-trees"
 root = "README.md"
 pages = []
 use-autoapi = true
-

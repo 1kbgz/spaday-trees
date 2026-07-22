@@ -1,6 +1,6 @@
 # spaday-trees
 
-Trees, by Pierre, for spaday
+[Trees, by Pierre](https://trees.software/docs), for [spaday](https://1kbgz.github.io/spaday/)
 
 [![Build Status](https://github.com/1kbgz/spaday-trees/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/1kbgz/spaday-trees/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/1kbgz/spaday-trees/branch/main/graph/badge.svg)](https://codecov.io/gh/1kbgz/spaday-trees)

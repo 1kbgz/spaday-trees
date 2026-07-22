@@ -199,7 +199,10 @@
   <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/test_all/index.html">test_all</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/spaday_trees/index.html">spaday_trees</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/spaday_trees/index.html">spaday_trees</a><input aria-label="Toggle navigation of spaday_trees" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/spaday_trees/components/index.html">spaday_trees.components</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -251,9 +254,32 @@
 <a class="reference external" href="https://pypi.python.org/pypi/spaday-trees"><img alt="PyPI" src="https://img.shields.io/pypi/v/spaday-trees.svg" /></a></p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">spaday-trees</span></code> wraps Pierre’s imperative <code class="docutils literal notranslate"><span class="pre">FileTree</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> custom element and exposes it
+as the Python <code class="docutils literal notranslate"><span class="pre">Tree</span></code> component. The first release supports reactive path replacement, selected paths,
+search, Git status, and path-based <code class="docutils literal notranslate"><span class="pre">selection-change</span></code> / <code class="docutils literal notranslate"><span class="pre">search-change</span></code> events.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday.backends.starlette</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spaday_trees</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tree</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span>
+    <span class="n">paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;src/index.ts&quot;</span><span class="p">,</span> <span class="s2">&quot;src/app.py&quot;</span><span class="p">,</span> <span class="s2">&quot;README.md&quot;</span><span class="p">],</span>
+    <span class="n">selected_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;src/app.py&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">serve</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trees&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Installing this project registers the <code class="docutils literal notranslate"><span class="pre">trees</span></code> entry point with spaday. The equivalent explicit forms
+are <code class="docutils literal notranslate"><span class="pre">packages=[spaday_trees.package]</span></code> and <code class="docutils literal notranslate"><span class="pre">packages=[&quot;spaday_trees:package&quot;]</span></code>.</p>
+<p>The integration pins <code class="docutils literal notranslate"><span class="pre">&#64;pierre/trees</span></code> <code class="docutils literal notranslate"><span class="pre">1.0.0-beta.5</span></code>. Rename, drag-and-drop persistence, custom
+composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.</p>
+</section>
+<section id="development">
+<h2>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>develop
+make<span class="w"> </span>build
+make<span class="w"> </span><span class="nb">test</span>
+make<span class="w"> </span>lint
+</pre></div>
 </div>
 </section>
 </section>

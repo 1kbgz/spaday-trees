@@ -1,25 +1,7 @@
-spaday_trees
-============
+spaday_trees.components
+=======================
 
-.. py:module:: spaday_trees
-
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 1
-
-   /autoapi/spaday_trees/components/index
-
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   spaday_trees.package
-   spaday_trees.Tree
+.. py:module:: spaday_trees.components
 
 
 Classes
@@ -27,11 +9,11 @@ Classes
 
 .. autoapisummary::
 
-   spaday_trees.SpadayTree
+   spaday_trees.components.SpadayTree
 
 
-Package Contents
-----------------
+Module Contents
+---------------
 
 .. py:class:: SpadayTree(*children: spaday.component.Child, key: Optional[str] = None, paths: Any = None, selected_paths: Any = None, search: Optional[str] = None, git_status: Any = None, **props: Any)
 
@@ -45,8 +27,4 @@ Package Contents
       :value: 'spaday-tree'
 
 
-
-.. py:data:: package
-
-.. py:data:: Tree
 

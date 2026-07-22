@@ -9,11 +9,17 @@ Functions
 
 .. autoapisummary::
 
-   test_all.test_all
+   test_all.test_tree_serializes_the_wrapper_properties
+   test_all.test_package_drives_bootstrap_asset_url
+   test_all.test_generated_component_is_current
 
 
 Module Contents
 ---------------
 
-.. py:function:: test_all()
+.. py:function:: test_tree_serializes_the_wrapper_properties()
+
+.. py:function:: test_package_drives_bootstrap_asset_url()
+
+.. py:function:: test_generated_component_is_current()
 

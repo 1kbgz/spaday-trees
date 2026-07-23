@@ -16,10 +16,10 @@ class SpadayTree(Component):
     def __init__(
         self,
         *children: Child,
-        key: Optional[str] = None,
+        key: Optional[str] = None,  # noqa: UP045
         paths: Any = None,
         selected_paths: Any = None,
-        search: Optional[str] = None,
+        search: Optional[str] = None,  # noqa: UP045
         git_status: Any = None,
         **props: Any,
     ) -> None:

@@ -48,3 +48,54 @@ test("dispatches path-based selection events", async ({ page }) => {
   });
   await expect(detail).resolves.toEqual({ paths: ["one.txt"] });
 });
+
+test("reveals a programmatically selected nested path", async ({ page }) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = [
+      "spaday_trees/__init__.py",
+      "spaday_trees/components.py",
+      "README.md",
+    ];
+    document.body.appendChild(tree);
+    tree.selected_paths = ["spaday_trees/components.py"];
+  });
+
+  const folder = page.locator(
+    'spaday-tree file-tree-container [data-item-path="spaday_trees/"]',
+  );
+  const component = page.locator(
+    'spaday-tree file-tree-container [data-item-path="spaday_trees/components.py"]',
+  );
+  await expect(folder).toHaveAttribute("aria-expanded", "true");
+  await expect(component).toHaveAttribute("aria-selected", "true");
+});
+
+test("preserves expanded folders across reactive path updates", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["docs/guide.md", "docs/reference.md"];
+    tree.search = "";
+    tree.addEventListener("selection-change", (event) => {
+      tree.paths = [...tree.paths];
+      tree.selected_paths = [...event.detail.paths];
+      tree.search = tree.search;
+    });
+    document.body.appendChild(tree);
+  });
+
+  const folder = page.locator(
+    'spaday-tree file-tree-container [data-item-path="docs/"]',
+  );
+  await folder.click();
+  await expect(folder).toHaveAttribute("aria-expanded", "true");
+
+  await page.locator("spaday-tree").evaluate((tree) => {
+    tree.paths = [...tree.paths, "server/review.md"];
+  });
+  await expect(folder).toHaveAttribute("aria-expanded", "true");
+});

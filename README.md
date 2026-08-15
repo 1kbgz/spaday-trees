@@ -13,7 +13,14 @@
 as the Python `Tree` component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based `selection-change` / `search-change` events.
 
-## Interactive example
+## Documentation
+
+- [Build a reactive project tree](docs/src/tutorial.md) — guided first application.
+- [Synchronize paths, selection, and search](docs/src/how-to.md) — task-focused recipes.
+- [API reference](docs/src/reference.md) — props, events, and package descriptor.
+- [Why Trees uses an imperative wrapper](docs/src/explanation.md) — integration design and tradeoffs.
+
+## Quick example
 
 This app filters the tree as you type. The button changes its selected path through spaday's reactive
 store; selecting and expanding nodes in the tree remains client-side.
@@ -62,6 +69,18 @@ are `packages=[spaday_trees.package]` and `packages=["spaday_trees:package"]`.
 
 The integration pins `@pierre/trees` `1.0.0-beta.5`. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.
+
+## Run the local example
+
+```bash
+python -m pip install -e ".[examples]"
+python -m spaday_trees.example
+```
+
+Open `http://127.0.0.1:8016` to inspect the [complete project-explorer example](spaday_trees/example.py): reactive
+server path updates, selection, built-in search, Git status, responsive styling, and client events logged
+by Python. It passes the local package descriptor directly, so it does not install or resolve the
+integration from GitHub.
 
 > [!NOTE]
 > This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

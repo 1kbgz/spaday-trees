@@ -99,3 +99,22 @@ test("preserves expanded folders across reactive path updates", async ({
   });
   await expect(folder).toHaveAttribute("aria-expanded", "true");
 });
+
+test("runs the Python explorer with server and selection updates", async ({
+  page,
+}) => {
+  await page.goto("http://127.0.0.1:8016");
+  const tree = page.locator("spaday-tree");
+  await expect(tree).toBeVisible();
+
+  await page.getByRole("button", { name: "Select component" }).click();
+  await expect(page.locator(".event-status")).toContainText(
+    "Selected spaday_trees/components.py",
+  );
+  await expect(
+    tree.locator('[data-item-path="spaday_trees/"]'),
+  ).toHaveAttribute("aria-expanded", "true");
+  await expect(tree.locator('[data-item-path="server/"]')).toBeVisible({
+    timeout: 7_000,
+  });
+});

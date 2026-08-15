@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="spaday_trees" href="../spaday_trees/index.html"><link rel="prev" title="API Reference" href="../index.html">
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="API reference" href="reference.html"><link rel="prev" title="Build a reactive project tree" href="tutorial.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>test_all - spaday-trees v0.1.0</title>
+        <title>How to synchronize paths, selection, and search - spaday-trees v0.1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -197,14 +197,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">test_all</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../spaday_trees/index.html">spaday_trees</a><input aria-label="Toggle navigation of spaday_trees" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../spaday_trees/components/index.html">spaday_trees.components</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Build a reactive project tree</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">How to synchronize paths, selection, and search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explanation.html">Why Trees uses an imperative wrapper</a></li>
 </ul>
 
 </div>
@@ -225,7 +221,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../_sources/autoapi/test_all/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../_sources/docs/src/how-to.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -243,43 +239,64 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-test_all">
-<span id="test-all"></span><h1>test_all<a class="headerlink" href="#module-test_all" title="Link to this heading">¶</a></h1>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#test_all.test_tree_serializes_the_wrapper_properties" title="test_all.test_tree_serializes_the_wrapper_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_tree_serializes_the_wrapper_properties</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#test_all.test_package_drives_bootstrap_asset_url" title="test_all.test_package_drives_bootstrap_asset_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_package_drives_bootstrap_asset_url</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#test_all.test_generated_component_is_current" title="test_all.test_generated_component_is_current"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_generated_component_is_current</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
+          <section class="tex2jax_ignore mathjax_ignore" id="how-to-synchronize-paths-selection-and-search">
+<h1>How to synchronize paths, selection, and search<a class="headerlink" href="#how-to-synchronize-paths-selection-and-search" title="Link to this heading">¶</a></h1>
+<section id="replace-paths-from-application-state">
+<h2>Replace paths from application state<a class="headerlink" href="#replace-paths-from-application-state" title="Link to this heading">¶</a></h2>
+<p>Bind the <code class="docutils literal notranslate"><span class="pre">paths</span></code> property to a store field:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">()</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;paths&quot;</span><span class="p">,</span> <span class="s2">&quot;project.paths&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the field changes, the wrapper calls Pierre’s <code class="docutils literal notranslate"><span class="pre">resetPaths()</span></code>, reapplies selection, and preserves
+expanded directories that still exist. Reassigning an identical path list is a no-op.</p>
+</section>
+<section id="apply-selection-and-search">
+<h2>Apply selection and search<a class="headerlink" href="#apply-selection-and-search" title="Link to this heading">¶</a></h2>
+<p>Both properties accept programmatic updates:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;selected_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;project.selected_paths&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="s2">&quot;project.search&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The wrapper ignores unchanged values and suppresses matching change events while applying new ones. This
+prevents a full server snapshot from resetting browser interaction state or echoing back as a new user edit.
+Programmatic selection also expands its ancestor directories and scrolls the first selected path into view.</p>
+</section>
+<section id="handle-browser-events">
+<h2>Handle browser events<a class="headerlink" href="#handle-browser-events" title="Link to this heading">¶</a></h2>
+<p>Selection events contain <code class="docutils literal notranslate"><span class="pre">{paths:</span> <span class="pre">string[]}</span></code> and search events contain <code class="docutils literal notranslate"><span class="pre">{value:</span> <span class="pre">string</span> <span class="pre">|</span> <span class="pre">null}</span></code>. A spaday
+endpoint action can send either payload to Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallEndpoint</span><span class="p">,</span> <span class="n">event_value</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">on</span><span class="p">(</span>
+        <span class="s2">&quot;selection-change&quot;</span><span class="p">,</span>
+        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;/api/selection&quot;</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">on</span><span class="p">(</span>
+        <span class="s2">&quot;search-change&quot;</span><span class="p">,</span>
+        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;/api/search&quot;</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
 </div>
 </section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="test_all.test_tree_serializes_the_wrapper_properties">
-<span class="sig-prename descclassname"><span class="pre">test_all.</span></span><span class="sig-name descname"><span class="pre">test_tree_serializes_the_wrapper_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test_all.test_tree_serializes_the_wrapper_properties" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="test_all.test_package_drives_bootstrap_asset_url">
-<span class="sig-prename descclassname"><span class="pre">test_all.</span></span><span class="sig-name descname"><span class="pre">test_package_drives_bootstrap_asset_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test_all.test_package_drives_bootstrap_asset_url" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="test_all.test_generated_component_is_current">
-<span class="sig-prename descclassname"><span class="pre">test_all.</span></span><span class="sig-name descname"><span class="pre">test_generated_component_is_current</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test_all.test_generated_component_is_current" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<section id="display-git-status">
+<h2>Display Git status<a class="headerlink" href="#display-git-status" title="Link to this heading">¶</a></h2>
+<p>Pass Pierre-compatible path and status records:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Tree</span><span class="p">(</span>
+    <span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">,</span>
+    <span class="n">git_status</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;modified&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;src/new.py&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;untracked&quot;</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Supported statuses are <code class="docutils literal notranslate"><span class="pre">added</span></code>, <code class="docutils literal notranslate"><span class="pre">deleted</span></code>, <code class="docutils literal notranslate"><span class="pre">ignored</span></code>, <code class="docutils literal notranslate"><span class="pre">modified</span></code>, <code class="docutils literal notranslate"><span class="pre">renamed</span></code>, and <code class="docutils literal notranslate"><span class="pre">untracked</span></code>.</p>
 </section>
 </section>
 
@@ -288,23 +305,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../spaday_trees/index.html">
+          <a class="next-page" href="reference.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">spaday_trees</div>
+                <div class="title">API reference</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../index.html">
+          <a class="prev-page" href="tutorial.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">API Reference</div>
+                <div class="title">Build a reactive project tree</div>
                 
               </div>
             </a>
@@ -338,14 +355,11 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">test_all</a><ul>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#test_all.test_tree_serializes_the_wrapper_properties"><code class="docutils literal notranslate"><span class="pre">test_tree_serializes_the_wrapper_properties()</span></code></a></li>
-<li><a class="reference internal" href="#test_all.test_package_drives_bootstrap_asset_url"><code class="docutils literal notranslate"><span class="pre">test_package_drives_bootstrap_asset_url()</span></code></a></li>
-<li><a class="reference internal" href="#test_all.test_generated_component_is_current"><code class="docutils literal notranslate"><span class="pre">test_generated_component_is_current()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">How to synchronize paths, selection, and search</a><ul>
+<li><a class="reference internal" href="#replace-paths-from-application-state">Replace paths from application state</a></li>
+<li><a class="reference internal" href="#apply-selection-and-search">Apply selection and search</a></li>
+<li><a class="reference internal" href="#handle-browser-events">Handle browser events</a></li>
+<li><a class="reference internal" href="#display-git-status">Display Git status</a></li>
 </ul>
 </li>
 </ul>

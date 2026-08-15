@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="spaday_trees.components" href="components/index.html"><link rel="prev" title="test_all" href="../test_all/index.html">
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="prev" title="API reference" href="reference.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>spaday_trees - spaday-trees v0.1.0</title>
+        <title>Why Trees uses an imperative wrapper - spaday-trees v0.1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -197,14 +197,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../test_all/index.html">test_all</a></li>
-<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">spaday_trees</a><input aria-label="Toggle navigation of spaday_trees" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="components/index.html">spaday_trees.components</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Build a reactive project tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to.html">How to synchronize paths, selection, and search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Why Trees uses an imperative wrapper</a></li>
 </ul>
 
 </div>
@@ -225,7 +221,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../_sources/autoapi/spaday_trees/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../_sources/docs/src/explanation.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -238,73 +234,28 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-spaday_trees">
-<span id="spaday-trees"></span><h1>spaday_trees<a class="headerlink" href="#module-spaday_trees" title="Link to this heading">¶</a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="components/index.html">spaday_trees.components</a></li>
+          <section class="tex2jax_ignore mathjax_ignore" id="why-trees-uses-an-imperative-wrapper">
+<h1>Why Trees uses an imperative wrapper<a class="headerlink" href="#why-trees-uses-an-imperative-wrapper" title="Link to this heading">¶</a></h1>
+<p>Pierre Trees owns a virtualized, interactive model rather than exposing a declarative custom-element API.
+Its <code class="docutils literal notranslate"><span class="pre">FileTree</span></code> class controls expansion, keyboard navigation, selection, search, rendering, and cleanup.</p>
+<p><code class="docutils literal notranslate"><span class="pre">spaday-trees</span></code> places that model behind <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> and defines a small serializable boundary:</p>
+<ul class="simple">
+<li><p>Python sends flat paths, selected paths, search text, and Git status;</p></li>
+<li><p>the wrapper applies those values to the existing Pierre model;</p></li>
+<li><p>browser edits return as path-based custom events.</p></li>
 </ul>
-</div>
-</section>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#spaday_trees.package" title="spaday_trees.package"><code class="xref py py-obj docutils literal notranslate"><span class="pre">package</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#spaday_trees.Tree" title="spaday_trees.Tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tree</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#spaday_trees.SpadayTree" title="spaday_trees.SpadayTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpadayTree</span></code></a></p></td>
-<td><p>Pierre Trees file tree with serializable paths, selection, search, and Git status.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="package-contents">
-<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="spaday_trees.SpadayTree">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spaday_trees.</span></span><span class="sig-name descname"><span class="pre">SpadayTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">spaday.component.Child</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">git_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/spaday_trees/components.html#SpadayTree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spaday_trees.SpadayTree" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">spaday.component.Component</span></code></p>
-<p>Pierre Trees file tree with serializable paths, selection, search, and Git status.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="spaday_trees.SpadayTree.tag">
-<span class="sig-name descname"><span class="pre">tag</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'spaday-tree'</span></em><a class="headerlink" href="#spaday_trees.SpadayTree.tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="spaday_trees.package">
-<span class="sig-prename descclassname"><span class="pre">spaday_trees.</span></span><span class="sig-name descname"><span class="pre">package</span></span><a class="headerlink" href="#spaday_trees.package" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="spaday_trees.Tree">
-<span class="sig-prename descclassname"><span class="pre">spaday_trees.</span></span><span class="sig-name descname"><span class="pre">Tree</span></span><a class="headerlink" href="#spaday_trees.Tree" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>This keeps rapid expansion and navigation local to the browser. Replacing a component tree for every
+interaction would discard internal state and add unnecessary serialization work. The wrapper instead
+creates one model on connection and cleans it up when disconnected.</p>
+<p>Paths are the shared identity. They are useful to both Python applications and Pierre, avoid a parallel
+opaque identifier system, and make server reconciliation straightforward. Programmatic update guards are
+part of that boundary: without them, applying server state could produce a feedback loop of identical
+browser events.</p>
 </section>
 
         </article>
@@ -312,23 +263,15 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="components/index.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">spaday_trees.components</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="../test_all/index.html">
+          
+          <a class="prev-page" href="reference.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">test_all</div>
+                <div class="title">API reference</div>
                 
               </div>
             </a>
@@ -350,38 +293,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">spaday_trees</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
-<li><a class="reference internal" href="#spaday_trees.SpadayTree"><code class="docutils literal notranslate"><span class="pre">SpadayTree</span></code></a><ul>
-<li><a class="reference internal" href="#spaday_trees.SpadayTree.tag"><code class="docutils literal notranslate"><span class="pre">SpadayTree.tag</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#spaday_trees.package"><code class="docutils literal notranslate"><span class="pre">package</span></code></a></li>
-<li><a class="reference internal" href="#spaday_trees.Tree"><code class="docutils literal notranslate"><span class="pre">Tree</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

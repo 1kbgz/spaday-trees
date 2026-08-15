@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API Reference" href="autoapi/index.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Build a reactive project tree" href="docs/src/tutorial.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
         <title>spaday-trees v0.1.0</title>
@@ -197,14 +197,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/test_all/index.html">test_all</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/spaday_trees/index.html">spaday_trees</a><input aria-label="Toggle navigation of spaday_trees" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="autoapi/spaday_trees/components/index.html">spaday_trees.components</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="docs/src/tutorial.html">Build a reactive project tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/src/how-to.html">How to synchronize paths, selection, and search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/src/reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/src/explanation.html">Why Trees uses an imperative wrapper</a></li>
 </ul>
 
 </div>
@@ -258,8 +254,17 @@
 as the Python <code class="docutils literal notranslate"><span class="pre">Tree</span></code> component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based <code class="docutils literal notranslate"><span class="pre">selection-change</span></code> / <code class="docutils literal notranslate"><span class="pre">search-change</span></code> events.</p>
 </section>
-<section id="interactive-example">
-<h2>Interactive example<a class="headerlink" href="#interactive-example" title="Link to this heading">¶</a></h2>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="docs/src/tutorial.html"><span class="std std-doc">Build a reactive project tree</span></a> — guided first application.</p></li>
+<li><p><a class="reference internal" href="docs/src/how-to.html"><span class="std std-doc">Synchronize paths, selection, and search</span></a> — task-focused recipes.</p></li>
+<li><p><a class="reference internal" href="docs/src/reference.html"><span class="std std-doc">API reference</span></a> — props, events, and package descriptor.</p></li>
+<li><p><a class="reference internal" href="docs/src/explanation.html"><span class="std std-doc">Why Trees uses an imperative wrapper</span></a> — integration design and tradeoffs.</p></li>
+</ul>
+</section>
+<section id="quick-example">
+<h2>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">¶</a></h2>
 <p>This app filters the tree as you type. The button changes its selected path through spaday’s reactive
 store; selecting and expanding nodes in the tree remains client-side.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetField</span><span class="p">,</span> <span class="n">element</span>
@@ -303,6 +308,17 @@ store; selecting and expanding nodes in the tree remains client-side.</p>
 are <code class="docutils literal notranslate"><span class="pre">packages=[spaday_trees.package]</span></code> and <code class="docutils literal notranslate"><span class="pre">packages=[&quot;spaday_trees:package&quot;]</span></code>.</p>
 <p>The integration pins <code class="docutils literal notranslate"><span class="pre">&#64;pierre/trees</span></code> <code class="docutils literal notranslate"><span class="pre">1.0.0-beta.5</span></code>. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.</p>
+</section>
+<section id="run-the-local-example">
+<h2>Run the local example<a class="headerlink" href="#run-the-local-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[examples]&quot;</span>
+python<span class="w"> </span>-m<span class="w"> </span>spaday_trees.example
+</pre></div>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8016</span></code> to inspect the <a class="reference download internal" download="" href="_downloads/1475f13b9277bc2fa89dc6fc98ca8d11/example.py"><span class="xref download myst">complete project-explorer example</span></a>: reactive
+server path updates, selection, built-in search, Git status, responsive styling, and client events logged
+by Python. It passes the local package descriptor directly, so it does not install or resolve the
+integration from GitHub.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>
@@ -315,12 +331,12 @@ composition renderers, and SSR/hydration are intentionally deferred while its be
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="autoapi/index.html">
+          <a class="next-page" href="docs/src/tutorial.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">API Reference</div>
+                <div class="title">Build a reactive project tree</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

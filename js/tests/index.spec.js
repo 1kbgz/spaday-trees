@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+<<<<<<< before updating
 test("registers and reactively updates a Pierre file tree", async ({
   page,
 }) => {
@@ -8,6 +9,11 @@ test("registers and reactively updates a Pierre file tree", async ({
     const tree = document.createElement("spaday-tree");
     tree.paths = ["src/index.ts", "README.md"];
     document.body.appendChild(tree);
+=======
+test.describe("Basics", () => {
+  test("basic", async () => {
+    await expect("").toBe("");
+>>>>>>> after updating
   });
 
   const labels = () =>

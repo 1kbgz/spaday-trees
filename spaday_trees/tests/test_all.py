@@ -16,6 +16,7 @@ def test_tree_serializes_the_wrapper_properties():
 
 def test_package_drives_bootstrap_asset_url():
     assert package.name == "trees"
+    assert [(schema.tag, schema.class_name) for schema in package.catalog] == [("spaday-tree", "SpadayTree")]
     assert 'src="/components/trees/cdn/index.js"' in bootstrap(packages=[package])
 
 

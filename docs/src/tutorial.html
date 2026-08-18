@@ -245,7 +245,7 @@
 browser.</p>
 <section id="install-the-packages">
 <h2>Install the packages<a class="headerlink" href="#install-the-packages" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;spaday[examples]&quot;</span><span class="w"> </span>spaday-trees
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"spaday[examples]"</span><span class="w"> </span>spaday-trees
 </pre></div>
 </div>
 </section>
@@ -258,43 +258,43 @@ browser.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">spaday_trees</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tree</span>
 
 <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;src/app.py&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;src/components/tree.py&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tests/test_app.py&quot;</span><span class="p">,</span>
+    <span class="s2">"README.md"</span><span class="p">,</span>
+    <span class="s2">"pyproject.toml"</span><span class="p">,</span>
+    <span class="s2">"src/app.py"</span><span class="p">,</span>
+    <span class="s2">"src/components/tree.py"</span><span class="p">,</span>
+    <span class="s2">"tests/test_app.py"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">,</span> <span class="n">selected_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;selected_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;selected&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="s2">&quot;24rem&quot;</span><span class="p">)</span>
+    <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">,</span> <span class="n">selected_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"README.md"</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"search"</span><span class="p">,</span> <span class="s2">"query"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"selected_paths"</span><span class="p">,</span> <span class="s2">"selected"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="s2">"24rem"</span><span class="p">)</span>
 <span class="p">)</span>
 
 <span class="n">page</span> <span class="o">=</span> <span class="n">element</span><span class="p">(</span>
-    <span class="s2">&quot;main&quot;</span><span class="p">,</span>
-    <span class="n">element</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;Project files&quot;</span><span class="p">),</span>
-    <span class="n">element</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Filter files…&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;query&quot;</span><span class="p">,</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;two-way&quot;</span><span class="p">,</span>
+    <span class="s2">"main"</span><span class="p">,</span>
+    <span class="n">element</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">"Project files"</span><span class="p">),</span>
+    <span class="n">element</span><span class="p">(</span><span class="s2">"input"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"search"</span><span class="p">,</span> <span class="n">placeholder</span><span class="o">=</span><span class="s2">"Filter files…"</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
+        <span class="s2">"value"</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"two-way"</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="n">element</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;Select app.py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span>
-        <span class="s2">&quot;click&quot;</span><span class="p">,</span>
-        <span class="n">SetField</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;src/app.py&quot;</span><span class="p">]),</span>
+    <span class="n">element</span><span class="p">(</span><span class="s2">"button"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">"Select app.py"</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span>
+        <span class="s2">"click"</span><span class="p">,</span>
+        <span class="n">SetField</span><span class="p">(</span><span class="s2">"selected"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"src/app.py"</span><span class="p">]),</span>
     <span class="p">),</span>
     <span class="n">tree</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="s2">&quot;42rem&quot;</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="s2">&quot;2rem auto&quot;</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;system-ui&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="s2">"42rem"</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="s2">"2rem auto"</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">"system-ui"</span><span class="p">)</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">serve</span><span class="p">(</span>
     <span class="n">page</span><span class="p">,</span>
-    <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trees&quot;</span><span class="p">],</span>
-    <span class="n">store</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;selected&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">]},</span>
+    <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="s2">"trees"</span><span class="p">],</span>
+    <span class="n">store</span><span class="o">=</span><span class="p">{</span><span class="s2">"query"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"selected"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"README.md"</span><span class="p">]},</span>
 <span class="p">)</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">tree_app.py</span></code>, then open <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8000</span></code>. Type in the search input and use the button.

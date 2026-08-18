@@ -32,4 +32,5 @@ path list does not rebuild the Pierre model.
 ## `package`
 
 `spaday_trees.package` is named `trees`. It serves the self-contained Pierre wrapper bundle from
-`/components/trees/cdn/index.js` when selected by `serve()`.
+`/components/trees/cdn/index.js` when selected by `serve()`. Its `components` collection contains
+`SpadayTree`; `catalog` returns the wrapper's property, event, and slot schema.

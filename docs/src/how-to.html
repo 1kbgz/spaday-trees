@@ -244,7 +244,7 @@
 <section id="replace-paths-from-application-state">
 <h2>Replace paths from application state<a class="headerlink" href="#replace-paths-from-application-state" title="Link to this heading">¶</a></h2>
 <p>Bind the <code class="docutils literal notranslate"><span class="pre">paths</span></code> property to a store field:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">()</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;paths&quot;</span><span class="p">,</span> <span class="s2">&quot;project.paths&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">()</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"paths"</span><span class="p">,</span> <span class="s2">"project.paths"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When the field changes, the wrapper calls Pierre’s <code class="docutils literal notranslate"><span class="pre">resetPaths()</span></code>, reapplies selection, and preserves
@@ -255,8 +255,8 @@ expanded directories that still exist. Reassigning an identical path list is a n
 <p>Both properties accept programmatic updates:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;selected_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;project.selected_paths&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="s2">&quot;project.search&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"selected_paths"</span><span class="p">,</span> <span class="s2">"project.selected_paths"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"search"</span><span class="p">,</span> <span class="s2">"project.search"</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -273,12 +273,12 @@ endpoint action can send either payload to Python:</p>
 <span class="n">tree</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">Tree</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">)</span>
     <span class="o">.</span><span class="n">on</span><span class="p">(</span>
-        <span class="s2">&quot;selection-change&quot;</span><span class="p">,</span>
-        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;/api/selection&quot;</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
+        <span class="s2">"selection-change"</span><span class="p">,</span>
+        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">"POST"</span><span class="p">,</span> <span class="s2">"/api/selection"</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">on</span><span class="p">(</span>
-        <span class="s2">&quot;search-change&quot;</span><span class="p">,</span>
-        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;/api/search&quot;</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
+        <span class="s2">"search-change"</span><span class="p">,</span>
+        <span class="n">CallEndpoint</span><span class="p">(</span><span class="s2">"POST"</span><span class="p">,</span> <span class="s2">"/api/search"</span><span class="p">,</span> <span class="n">event_value</span><span class="p">()),</span>
     <span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -290,8 +290,8 @@ endpoint action can send either payload to Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Tree</span><span class="p">(</span>
     <span class="n">paths</span><span class="o">=</span><span class="n">paths</span><span class="p">,</span>
     <span class="n">git_status</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;modified&quot;</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;src/new.py&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;untracked&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"path"</span><span class="p">:</span> <span class="s2">"README.md"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"modified"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"path"</span><span class="p">:</span> <span class="s2">"src/new.py"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"untracked"</span><span class="p">},</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>

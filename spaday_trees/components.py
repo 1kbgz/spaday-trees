@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from spaday.catalog import ComponentSchema, PropertySchema
 from spaday.component import Child, Component
 
 __all__ = ["SpadayTree"]
@@ -12,6 +13,19 @@ class SpadayTree(Component):
     """Pierre Trees file tree with serializable paths, selection, search, and Git status."""
 
     tag = "spaday-tree"
+    schema = ComponentSchema(
+        tag="spaday-tree",
+        class_name="SpadayTree",
+        summary="Pierre Trees file tree with serializable paths, selection, search, and Git status.",
+        props=(
+            PropertySchema(name="paths", kind="json", choices=(), default=None, description=None),
+            PropertySchema(name="selected_paths", kind="json", choices=(), default=None, description=None),
+            PropertySchema(name="search", kind="string", choices=(), default=None, description=None),
+            PropertySchema(name="git_status", kind="json", choices=(), default=None, description=None),
+        ),
+        events=("selection-change", "search-change"),
+        slots=(),
+    )
 
     def __init__(
         self,

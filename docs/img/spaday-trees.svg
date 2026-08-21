@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254" shape-rendering="geometricPrecision">
+  <defs>
+    <clipPath id="viewport-clip">
+      <rect x="124" y="243" width="1006" height="854" rx="62"/>
+    </clipPath>
+  </defs>
+
+  <rect x="88" y="96" width="1078" height="1036" rx="108" fill="#0C4253"/>
+  <rect x="124" y="243" width="1006" height="854" rx="62" fill="#F2F3EF"/>
+  <circle cx="208" cy="175" r="25" fill="#FC6B47"/>
+  <circle cx="295" cy="175" r="25" fill="#AECEC3"/>
+  <circle cx="383" cy="175" r="25" fill="#F2F3EF"/>
+
+  <g clip-path="url(#viewport-clip)">
+    <g transform="translate(627 670) scale(1.15) translate(-627 -670)">
+  <g clip-path="url(#viewport-clip)" fill="none" stroke="#0C4253" stroke-linecap="round">
+    <path d="M154 844 C390 870 626 819 727 695 C804 600 790 514 1065 439" stroke-width="30"/>
+    <path d="M146 920 C423 956 704 868 804 735 C869 648 844 581 1056 512" stroke-width="30"/>
+    <path d="M176 995 C474 1021 790 925 891 778 C944 700 923 641 1062 585" stroke-width="30"/>
+  </g>
+
+  <g fill="#FC6B47">
+    <circle cx="1018" cy="439" r="23"/>
+    <circle cx="804" cy="735" r="23"/>
+    <circle cx="891" cy="778" r="23"/>
+  </g>
+
+  <ellipse cx="458" cy="821" rx="191" ry="55" fill="#AECEC3"/>
+
+  <path d="M329 559 C286 521 290 459 334 428 C330 370 381 330 436 345 C472 300 543 302 576 351 C637 347 677 395 667 450 C710 481 704 548 657 573 C646 630 584 650 540 620 C503 661 435 657 405 613 C373 625 340 604 329 559 Z" fill="#AECEC3"/>
+
+  <path d="M426 825 C444 761 446 704 433 649 C421 598 392 559 355 527 L380 500 C410 526 435 555 452 589 C459 541 455 496 442 457 L477 447 C493 496 497 545 487 594 C515 558 549 529 591 508 L610 541 C559 569 520 609 497 657 C484 700 486 762 504 825 Z" fill="#0C4253"/>
+
+  <g fill="#FC6B47">
+    <circle cx="354" cy="478" r="24"/>
+    <circle cx="447" cy="399" r="24"/>
+    <circle cx="557" cy="420" r="24"/>
+    <circle cx="614" cy="512" r="24"/>
+  </g>
+    </g>
+  </g>
+</svg>

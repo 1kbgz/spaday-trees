@@ -241,21 +241,25 @@
         <article role="main" id="furo-main-content">
           <div class="toctree-wrapper compound">
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="spaday-trees">
-<h1>spaday-trees<a class="headerlink" href="#spaday-trees" title="Link to this heading">¶</a></h1>
+<a href="https://github.com/1kbgz/spaday-trees">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/1kbgz/spaday-trees/raw/main/docs/img/logo-dark.png?raw=true">
+    <img alt="spaday-trees logo, trees and a stream inside a browser window" src="https://github.com/1kbgz/spaday-trees/raw/main/docs/img/logo-light.png?raw=true" width="800">
+  </picture>
+</a>
 <p><a class="reference external" href="https://trees.software/docs">Trees, by Pierre</a>, for <a class="reference external" href="https://1kbgz.github.io/spaday/">spaday</a></p>
 <p><a class="reference external" href="https://github.com/1kbgz/spaday-trees/actions/workflows/build.yaml"><img alt="Build Status" src="https://github.com/1kbgz/spaday-trees/actions/workflows/build.yaml/badge.svg?branch=main&amp;event=push" /></a>
 <a class="reference external" href="https://codecov.io/gh/1kbgz/spaday-trees"><img alt="codecov" src="https://codecov.io/gh/1kbgz/spaday-trees/branch/main/graph/badge.svg" /></a>
 <a class="reference external" href="https://github.com/1kbgz/spaday-trees"><img alt="License" src="https://img.shields.io/github/license/1kbgz/spaday-trees" /></a>
 <a class="reference external" href="https://pypi.python.org/pypi/spaday-trees"><img alt="PyPI" src="https://img.shields.io/pypi/v/spaday-trees.svg" /></a></p>
 <section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">spaday-trees</span></code> wraps Pierre’s imperative <code class="docutils literal notranslate"><span class="pre">FileTree</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> custom element and exposes it
 as the Python <code class="docutils literal notranslate"><span class="pre">Tree</span></code> component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based <code class="docutils literal notranslate"><span class="pre">selection-change</span></code> / <code class="docutils literal notranslate"><span class="pre">search-change</span></code> events.</p>
 </section>
 <section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="docs/src/tutorial.html"><span class="std std-doc">Build a reactive project tree</span></a> — guided first application.</p></li>
 <li><p><a class="reference internal" href="docs/src/how-to.html"><span class="std std-doc">Synchronize paths, selection, and search</span></a> — task-focused recipes.</p></li>
@@ -264,7 +268,7 @@ search, Git status, and path-based <code class="docutils literal notranslate"><s
 </ul>
 </section>
 <section id="quick-example">
-<h2>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">¶</a></h2>
+<h1>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">¶</a></h1>
 <p>This app filters the tree as you type. The button changes its selected path through spaday’s reactive
 store; selecting and expanding nodes in the tree remains client-side.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spaday</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetField</span><span class="p">,</span> <span class="n">element</span>
@@ -310,7 +314,7 @@ are <code class="docutils literal notranslate"><span class="pre">packages=[spada
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.</p>
 </section>
 <section id="run-the-local-example">
-<h2>Run the local example<a class="headerlink" href="#run-the-local-example" title="Link to this heading">¶</a></h2>
+<h1>Run the local example<a class="headerlink" href="#run-the-local-example" title="Link to this heading">¶</a></h1>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[examples]"</span>
 python<span class="w"> </span>-m<span class="w"> </span>spaday_trees.example
 </pre></div>
@@ -323,7 +327,6 @@ integration from GitHub.</p>
 <p class="admonition-title">Note</p>
 <p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>
 </div>
-</section>
 </section>
 
         </article>

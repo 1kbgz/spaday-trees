@@ -1,4 +1,16 @@
-import { FileTree, type GitStatusEntry } from "@pierre/trees";
+import {
+  FileTree,
+  type FileTreeDirectoryHandle,
+  type FileTreeItemHandle,
+  type GitStatusEntry,
+} from "@pierre/trees";
+
+// upstream's isDirectory(): boolean is not a type predicate, so it cannot narrow the handle union
+function isDirectoryHandle(
+  item: FileTreeItemHandle,
+): item is FileTreeDirectoryHandle {
+  return item.isDirectory();
+}
 
 class SpadayTree extends HTMLElement {
   #model: FileTree | null = null;
@@ -121,7 +133,7 @@ class SpadayTree extends HTMLElement {
       for (const path of selected) {
         for (const directory of this.#ancestorPaths(path)) {
           const item = this.#model.getItem(directory);
-          if (item?.isDirectory()) item.expand();
+          if (item && isDirectoryHandle(item)) item.expand();
         }
       }
       const firstPath = this.#selectedPaths.find((path) =>
@@ -150,7 +162,8 @@ class SpadayTree extends HTMLElement {
       ];
       for (const directory of directories) {
         const item = this.#model.getItem(directory);
-        if (item?.isDirectory() && item.isExpanded()) expanded.add(directory);
+        if (item && isDirectoryHandle(item) && item.isExpanded())
+          expanded.add(directory);
       }
     }
     return [...expanded];

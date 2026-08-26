@@ -1,0 +1,9 @@
+/*
+ * The engine's shadow stylesheet sizes the virtualized host with
+ * `height: 100%`, which collapses to zero inside parents that impose no
+ * height. Give it a usable floor so rows still render; override with
+ * `--trees-min-height` (or give the element or an ancestor a height).
+ */
+spaday-tree [data-file-tree-virtualized="true"] {
+  min-height: var(--trees-min-height, 200px);
+}

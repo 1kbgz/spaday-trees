@@ -12,6 +12,13 @@ function isDirectoryHandle(
   return item.isDirectory();
 }
 
+/**
+ * `<spaday-tree>` wraps Pierre's imperative `FileTree` engine.
+ *
+ * Setting `selected_paths` reveals the selection: ancestor directories are
+ * expanded and the first selected path is scrolled into view. This reveal
+ * behaviour is a supported contract.
+ */
 class SpadayTree extends HTMLElement {
   #model: FileTree | null = null;
   #paths: string[] = [];
@@ -20,6 +27,7 @@ class SpadayTree extends HTMLElement {
   #gitStatus: GitStatusEntry[] | undefined;
   #applyingSelection = false;
   #applyingSearch = false;
+  #warnedZeroHeight = false;
 
   connectedCallback(): void {
     if (this.#model) return;
@@ -57,6 +65,7 @@ class SpadayTree extends HTMLElement {
     });
     this.#model.render({ containerWrapper: this });
     this.#applySelection();
+    this.#warnIfZeroHeight();
   }
 
   disconnectedCallback(): void {
@@ -77,13 +86,28 @@ class SpadayTree extends HTMLElement {
     this.#paths = [...nextPaths];
     this.#model?.resetPaths(this.#paths, { initialExpandedPaths });
     this.#applySelection();
+    this.#warnIfZeroHeight();
   }
   get paths(): string[] {
     return this.#paths;
   }
 
-  set selected_paths(paths: string[]) {
-    const nextPaths = paths || [];
+  /**
+   * Setting `selected_paths` reveals the selection: ancestor directories are
+   * expanded and the first selected path is scrolled into view. A bare string
+   * is coerced to a one-element list; other non-list values throw a TypeError.
+   */
+  set selected_paths(paths: string[] | string) {
+    let nextPaths: string[];
+    if (typeof paths === "string") {
+      nextPaths = [paths];
+    } else if (paths && !Array.isArray(paths)) {
+      throw new TypeError(
+        `selected_paths expects an array of paths (or a single string), received ${typeof paths}`,
+      );
+    } else {
+      nextPaths = paths || [];
+    }
     if (
       nextPaths.length === this.#selectedPaths.length &&
       nextPaths.every((path, index) => path === this.#selectedPaths[index])
@@ -142,6 +166,18 @@ class SpadayTree extends HTMLElement {
       if (firstPath) this.#model.scrollToPath(firstPath, { offset: "nearest" });
     } finally {
       this.#applyingSelection = false;
+    }
+  }
+
+  #warnIfZeroHeight(): void {
+    if (this.#warnedZeroHeight || !this.isConnected || !this.#paths.length) {
+      return;
+    }
+    if (this.getBoundingClientRect().height === 0) {
+      this.#warnedZeroHeight = true;
+      console.warn(
+        "<spaday-tree> measured zero height with non-empty paths, so no rows are visible. Give the element or an ancestor a height (or set --trees-min-height).",
+      );
     }
   }
 

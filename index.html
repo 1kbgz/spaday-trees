@@ -257,6 +257,13 @@
 <p><code class="docutils literal notranslate"><span class="pre">spaday-trees</span></code> wraps Pierre’s imperative <code class="docutils literal notranslate"><span class="pre">FileTree</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> custom element and exposes it
 as the Python <code class="docutils literal notranslate"><span class="pre">Tree</span></code> component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based <code class="docutils literal notranslate"><span class="pre">selection-change</span></code> / <code class="docutils literal notranslate"><span class="pre">search-change</span></code> events.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">selected_paths</span></code> reveals the selection — ancestor directories are expanded automatically and
+the first selected path is scrolled into view. This reveal behaviour is a supported contract. A bare
+string is coerced to a one-element list; other non-list values raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
+<p>The virtualized tree needs a height: give the element or an ancestor one (the quick example uses
+<code class="docutils literal notranslate"><span class="pre">.style(height=&quot;22rem&quot;)</span></code>). Without one, the package stylesheet applies a <code class="docutils literal notranslate"><span class="pre">min-height</span></code> fallback of
+<code class="docutils literal notranslate"><span class="pre">200px</span></code>, overridable through the <code class="docutils literal notranslate"><span class="pre">--trees-min-height</span></code> CSS variable. A tree that still measures zero
+height with non-empty <code class="docutils literal notranslate"><span class="pre">paths</span></code> logs a one-time console warning.</p>
 </section>
 <section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
@@ -312,6 +319,14 @@ store; selecting and expanding nodes in the tree remains client-side.</p>
 are <code class="docutils literal notranslate"><span class="pre">packages=[spaday_trees.package]</span></code> and <code class="docutils literal notranslate"><span class="pre">packages=[&quot;spaday_trees:package&quot;]</span></code>.</p>
 <p>The integration pins <code class="docutils literal notranslate"><span class="pre">&#64;pierre/trees</span></code> <code class="docutils literal notranslate"><span class="pre">1.0.0-beta.5</span></code>. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.</p>
+</section>
+<section id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h1>
+<p>Rows render inside the shadow root of the engine’s <code class="docutils literal notranslate"><span class="pre">&lt;file-tree-container&gt;</span></code> element, so <code class="docutils literal notranslate"><span class="pre">innerText</span></code>
+or <code class="docutils literal notranslate"><span class="pre">childElementCount</span></code> on the <code class="docutils literal notranslate"><span class="pre">&lt;spaday-tree&gt;</span></code> host show nothing even when rendering works. Row
+labels are fragmented for truncation, so text selectors fail. Use the stable hooks instead: each
+rendered row carries <code class="docutils literal notranslate"><span class="pre">[data-item-path]</span></code> (its path, directories with a trailing <code class="docutils literal notranslate"><span class="pre">/</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">[role=&quot;treeitem&quot;]</span></code>.</p>
 </section>
 <section id="run-the-local-example">
 <h1>Run the local example<a class="headerlink" href="#run-the-local-example" title="Link to this heading">¶</a></h1>

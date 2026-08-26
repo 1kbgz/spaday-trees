@@ -18,6 +18,15 @@
 as the Python `Tree` component. The first release supports reactive path replacement, selected paths,
 search, Git status, and path-based `selection-change` / `search-change` events.
 
+Setting `selected_paths` reveals the selection — ancestor directories are expanded automatically and
+the first selected path is scrolled into view. This reveal behaviour is a supported contract. A bare
+string is coerced to a one-element list; other non-list values raise a `TypeError`.
+
+The virtualized tree needs a height: give the element or an ancestor one (the quick example uses
+`.style(height="22rem")`). Without one, the package stylesheet applies a `min-height` fallback of
+`200px`, overridable through the `--trees-min-height` CSS variable. A tree that still measures zero
+height with non-empty `paths` logs a one-time console warning.
+
 ## Documentation
 
 - [Build a reactive project tree](docs/src/tutorial.md) — guided first application.
@@ -74,6 +83,14 @@ are `packages=[spaday_trees.package]` and `packages=["spaday_trees:package"]`.
 
 The integration pins `@pierre/trees` `1.0.0-beta.5`. Rename, drag-and-drop persistence, custom
 composition renderers, and SSR/hydration are intentionally deferred while its beta API settles.
+
+## Testing
+
+Rows render inside the shadow root of the engine's `<file-tree-container>` element, so `innerText`
+or `childElementCount` on the `<spaday-tree>` host show nothing even when rendering works. Row
+labels are fragmented for truncation, so text selectors fail. Use the stable hooks instead: each
+rendered row carries `[data-item-path]` (its path, directories with a trailing `/`) and
+`[role="treeitem"]`.
 
 ## Run the local example
 

@@ -49,6 +49,112 @@ test("dispatches path-based selection events", async ({ page }) => {
   await expect(detail).resolves.toEqual({ paths: ["one.txt"] });
 });
 
+test("renders rows in an auto-height container via the min-height fallback", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const container = document.createElement("div");
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["src/index.ts", "src/app.ts", "README.md"];
+    container.appendChild(tree);
+    document.body.appendChild(container);
+  });
+
+  const engine = page.locator("spaday-tree file-tree-container");
+  await expect(engine).toHaveAttribute("data-file-tree-virtualized", "true");
+  await expect
+    .poll(() => engine.evaluate((host) => host.getBoundingClientRect().height))
+    .toBeGreaterThanOrEqual(200);
+  await expect
+    .poll(() =>
+      engine.evaluate(
+        (host) => host.shadowRoot.querySelectorAll('[role="treeitem"]').length,
+      ),
+    )
+    .toBeGreaterThan(0);
+});
+
+test("warns once when the tree measures zero height with paths", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  const warnings = [];
+  page.on("console", (message) => {
+    if (message.type() === "warning" && message.text().includes("zero height"))
+      warnings.push(message.text());
+  });
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.style.height = "0px";
+    tree.style.overflow = "hidden";
+    tree.paths = ["one.txt"];
+    document.body.appendChild(tree);
+    tree.paths = ["one.txt", "two.txt"];
+  });
+  await expect.poll(() => warnings.length).toBeGreaterThan(0);
+  await page.waitForTimeout(100);
+  expect(warnings.length).toBe(1);
+  expect(warnings[0]).toContain("Give the element or an ancestor a height");
+});
+
+test("coerces a string selected_paths and rejects non-list values", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  const result = await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["docs/guide.md", "README.md"];
+    document.body.appendChild(tree);
+    tree.selected_paths = "docs/guide.md";
+    let error = null;
+    try {
+      tree.selected_paths = 3;
+    } catch (err) {
+      error = String(err);
+    }
+    return { selected: tree.selected_paths, error };
+  });
+  expect(result.selected).toEqual(["docs/guide.md"]);
+  expect(result.error).toContain("TypeError");
+  expect(result.error).toContain("selected_paths");
+  expect(result.error).toContain("number");
+
+  const folder = page.locator(
+    'spaday-tree file-tree-container [data-item-path="docs/"]',
+  );
+  const item = page.locator(
+    'spaday-tree file-tree-container [data-item-path="docs/guide.md"]',
+  );
+  await expect(folder).toHaveAttribute("aria-expanded", "true");
+  await expect(item).toHaveAttribute("aria-selected", "true");
+});
+
+test("exposes stable row hooks inside the engine shadow root", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["src/index.ts"];
+    document.body.appendChild(tree);
+  });
+
+  const row = page.locator('spaday-tree [data-item-path="src/"]');
+  await expect(row).toHaveAttribute("role", "treeitem");
+  const counts = await page
+    .locator("spaday-tree file-tree-container")
+    .evaluate((host) => ({
+      light: host.querySelectorAll('[data-item-path], [role="treeitem"]')
+        .length,
+      shadow: host.shadowRoot.querySelectorAll(
+        '[data-item-path], [role="treeitem"]',
+      ).length,
+    }));
+  expect(counts.light).toBe(0);
+  expect(counts.shadow).toBeGreaterThan(0);
+});
+
 test("reveals a programmatically selected nested path", async ({ page }) => {
   await page.goto("/dist/index.html");
   await page.evaluate(() => {

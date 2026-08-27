@@ -10,20 +10,58 @@ __all__ = ["SpadayTree"]
 
 
 class SpadayTree(Component):
-    """Pierre Trees file tree with serializable paths, selection, search, and Git status."""
+    """Pierre Trees file tree with serializable paths, selection, expansion, search, Git status, and per-path decorations."""
 
     tag = "spaday-tree"
     schema = ComponentSchema(
         tag="spaday-tree",
         class_name="SpadayTree",
-        summary="Pierre Trees file tree with serializable paths, selection, search, and Git status.",
+        summary="Pierre Trees file tree with serializable paths, selection, expansion, search, Git status, and per-path decorations.",
         props=(
-            PropertySchema(name="paths", kind="json", choices=(), default=None, description=None),
-            PropertySchema(name="selected_paths", kind="json", choices=(), default=None, description=None),
-            PropertySchema(name="search", kind="string", choices=(), default=None, description=None),
-            PropertySchema(name="git_status", kind="json", choices=(), default=None, description=None),
+            PropertySchema(
+                name="paths",
+                kind="json",
+                choices=(),
+                default=None,
+                description="Every file path the tree renders. Directories are inferred from '/' separators; a trailing slash names an explicit directory. Updating the list preserves current expansion.",
+            ),
+            PropertySchema(
+                name="selected_paths",
+                kind="json",
+                choices=(),
+                default=None,
+                description="Selected paths, two-way via the selection-change event. Setting selected_paths expands ancestor directories to reveal the selection and scrolls the first selected path into view — a supported contract. A bare string is coerced to a one-element list.",
+            ),
+            PropertySchema(
+                name="expanded_paths",
+                kind="json",
+                choices=(),
+                default=None,
+                description="Expanded directory paths (canonical 'dir/' form), two-way via the expansion-change event. Reading reflects the engine's current expansion; setting expands the listed directories and collapses all others, so list every directory that should stay open. A bare string is coerced to a one-element list. Independent of the selected_paths reveal.",
+            ),
+            PropertySchema(
+                name="search",
+                kind="string",
+                choices=(),
+                default=None,
+                description="Search query filtering the tree; empty or null clears the search. Two-way via the search-change event.",
+            ),
+            PropertySchema(
+                name="git_status",
+                kind="json",
+                choices=(),
+                default=None,
+                description="Git status entries [{path, status}] with status added | deleted | ignored | modified | renamed | untracked. Rendered as a preset over decorations: the engine's status letter and colors on the row, plus roll-up dots on ancestor directories. A decorations entry for the same path wins field-by-field.",
+            ),
+            PropertySchema(
+                name="decorations",
+                kind="json",
+                choices=(),
+                default=None,
+                description="Per-path row decorations {path: {icon?, tone?, badge?, tooltip?}}. badge (short text) or icon (Pierre icon name or {name, width?, height?}) render after the label — badge wins when both are set; tooltip becomes the row title; tone adds a spaday-tone-<tone> class to the row. Built-in tones info | success | warning | danger | muted have light/dark colors overridable via --trees-tone-* custom properties.",
+            ),
         ),
-        events=("selection-change", "search-change"),
+        events=("selection-change", "expansion-change", "search-change"),
         slots=(),
     )
 
@@ -33,8 +71,10 @@ class SpadayTree(Component):
         key: str | None = None,
         paths: Any = None,
         selected_paths: Any = None,
+        expanded_paths: Any = None,
         search: str | None = None,
         git_status: Any = None,
+        decorations: Any = None,
         **props: Any,
     ) -> None:
         super().__init__(
@@ -43,8 +83,10 @@ class SpadayTree(Component):
             props={
                 "paths": paths,
                 "selected_paths": selected_paths,
+                "expanded_paths": expanded_paths,
                 "search": search,
                 "git_status": git_status,
+                "decorations": decorations,
             },
             **props,
         )

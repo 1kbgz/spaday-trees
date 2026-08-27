@@ -9,15 +9,42 @@
           "name": "Tree",
           "customElement": true,
           "tagName": "spaday-tree",
-          "summary": "Pierre Trees file tree with serializable paths, selection, search, and Git status.",
+          "summary": "Pierre Trees file tree with serializable paths, selection, expansion, search, Git status, and per-path decorations.",
           "attributes": [
-            { "name": "paths", "type": { "text": "string[]" } },
-            { "name": "selected_paths", "type": { "text": "string[]" } },
-            { "name": "search", "type": { "text": "string | null" } },
-            { "name": "git_status", "type": { "text": "unknown" } }
+            {
+              "name": "paths",
+              "type": { "text": "string[]" },
+              "description": "Every file path the tree renders. Directories are inferred from '/' separators; a trailing slash names an explicit directory. Updating the list preserves current expansion."
+            },
+            {
+              "name": "selected_paths",
+              "type": { "text": "string[]" },
+              "description": "Selected paths, two-way via the selection-change event. Setting selected_paths expands ancestor directories to reveal the selection and scrolls the first selected path into view — a supported contract. A bare string is coerced to a one-element list."
+            },
+            {
+              "name": "expanded_paths",
+              "type": { "text": "string[]" },
+              "description": "Expanded directory paths (canonical 'dir/' form), two-way via the expansion-change event. Reading reflects the engine's current expansion; setting expands the listed directories and collapses all others, so list every directory that should stay open. A bare string is coerced to a one-element list. Independent of the selected_paths reveal."
+            },
+            {
+              "name": "search",
+              "type": { "text": "string | null" },
+              "description": "Search query filtering the tree; empty or null clears the search. Two-way via the search-change event."
+            },
+            {
+              "name": "git_status",
+              "type": { "text": "unknown" },
+              "description": "Git status entries [{path, status}] with status added | deleted | ignored | modified | renamed | untracked. Rendered as a preset over decorations: the engine's status letter and colors on the row, plus roll-up dots on ancestor directories. A decorations entry for the same path wins field-by-field."
+            },
+            {
+              "name": "decorations",
+              "type": { "text": "unknown" },
+              "description": "Per-path row decorations {path: {icon?, tone?, badge?, tooltip?}}. badge (short text) or icon (Pierre icon name or {name, width?, height?}) render after the label — badge wins when both are set; tooltip becomes the row title; tone adds a spaday-tone-<tone> class to the row. Built-in tones info | success | warning | danger | muted have light/dark colors overridable via --trees-tone-* custom properties."
+            }
           ],
           "events": [
             { "name": "selection-change", "type": { "text": "CustomEvent<{ paths: string[] }>" } },
+            { "name": "expansion-change", "type": { "text": "CustomEvent<{ paths: string[] }>" } },
             { "name": "search-change", "type": { "text": "CustomEvent<{ value: string | null }>" } }
           ],
           "slots": []

@@ -247,20 +247,58 @@
 <div class="viewcode-block" id="SpadayTree">
 <a class="viewcode-back" href="../../docs/src/reference.html#spaday_trees.SpadayTree">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SpadayTree</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Pierre Trees file tree with serializable paths, selection, search, and Git status."""</span>
+<span class="w">    </span><span class="sd">"""Pierre Trees file tree with serializable paths, selection, expansion, search, Git status, and per-path decorations."""</span>
 
     <span class="n">tag</span> <span class="o">=</span> <span class="s2">"spaday-tree"</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">ComponentSchema</span><span class="p">(</span>
         <span class="n">tag</span><span class="o">=</span><span class="s2">"spaday-tree"</span><span class="p">,</span>
         <span class="n">class_name</span><span class="o">=</span><span class="s2">"SpadayTree"</span><span class="p">,</span>
-        <span class="n">summary</span><span class="o">=</span><span class="s2">"Pierre Trees file tree with serializable paths, selection, search, and Git status."</span><span class="p">,</span>
+        <span class="n">summary</span><span class="o">=</span><span class="s2">"Pierre Trees file tree with serializable paths, selection, expansion, search, Git status, and per-path decorations."</span><span class="p">,</span>
         <span class="n">props</span><span class="o">=</span><span class="p">(</span>
-            <span class="n">PropertySchema</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"paths"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">PropertySchema</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"selected_paths"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">PropertySchema</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"search"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"string"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">PropertySchema</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"git_status"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"paths"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Every file path the tree renders. Directories are inferred from '/' separators; a trailing slash names an explicit directory. Updating the list preserves current expansion."</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"selected_paths"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Selected paths, two-way via the selection-change event. Setting selected_paths expands ancestor directories to reveal the selection and scrolls the first selected path into view — a supported contract. A bare string is coerced to a one-element list."</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"expanded_paths"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Expanded directory paths (canonical 'dir/' form), two-way via the expansion-change event. Reading reflects the engine's current expansion; setting expands the listed directories and collapses all others, so list every directory that should stay open. A bare string is coerced to a one-element list. Independent of the selected_paths reveal."</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"search"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"string"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Search query filtering the tree; empty or null clears the search. Two-way via the search-change event."</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"git_status"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Git status entries [{path, status}] with status added | deleted | ignored | modified | renamed | untracked. Rendered as a preset over decorations: the engine's status letter and colors on the row, plus roll-up dots on ancestor directories. A decorations entry for the same path wins field-by-field."</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PropertySchema</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"decorations"</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">(),</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">"Per-path row decorations {path: {icon?, tone?, badge?, tooltip?}}. badge (short text) or icon (Pierre icon name or {name, width?, height?}) render after the label — badge wins when both are set; tooltip becomes the row title; tone adds a spaday-tone-&lt;tone&gt; class to the row. Built-in tones info | success | warning | danger | muted have light/dark colors overridable via --trees-tone-* custom properties."</span><span class="p">,</span>
+            <span class="p">),</span>
         <span class="p">),</span>
-        <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">"selection-change"</span><span class="p">,</span> <span class="s2">"search-change"</span><span class="p">),</span>
+        <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">"selection-change"</span><span class="p">,</span> <span class="s2">"expansion-change"</span><span class="p">,</span> <span class="s2">"search-change"</span><span class="p">),</span>
         <span class="n">slots</span><span class="o">=</span><span class="p">(),</span>
     <span class="p">)</span>
 
@@ -270,8 +308,10 @@
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">paths</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">selected_paths</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">expanded_paths</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">search</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">git_status</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">decorations</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">props</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -280,8 +320,10 @@
             <span class="n">props</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">"paths"</span><span class="p">:</span> <span class="n">paths</span><span class="p">,</span>
                 <span class="s2">"selected_paths"</span><span class="p">:</span> <span class="n">selected_paths</span><span class="p">,</span>
+                <span class="s2">"expanded_paths"</span><span class="p">:</span> <span class="n">expanded_paths</span><span class="p">,</span>
                 <span class="s2">"search"</span><span class="p">:</span> <span class="n">search</span><span class="p">,</span>
                 <span class="s2">"git_status"</span><span class="p">:</span> <span class="n">git_status</span><span class="p">,</span>
+                <span class="s2">"decorations"</span><span class="p">:</span> <span class="n">decorations</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="o">**</span><span class="n">props</span><span class="p">,</span>
         <span class="p">)</span></div>

@@ -4,7 +4,7 @@ from spaday import ComponentPackage
 
 from .components import SpadayTree
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 package = ComponentPackage(
     name="trees",

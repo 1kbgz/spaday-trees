@@ -478,3 +478,22 @@ test("runs the Python explorer with server and selection updates", async ({
     timeout: 7_000,
   });
 });
+
+test("follows the wa-dark page mode", async ({ page }) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["one.txt"];
+    document.body.appendChild(tree);
+  });
+  const scheme = () =>
+    page
+      .locator("file-tree-container")
+      .evaluate((el) => getComputedStyle(el).colorScheme);
+  await expect.poll(scheme).toBe("light dark"); // the engine's own default
+  await page.evaluate(() => document.documentElement.classList.add("wa-dark"));
+  await expect.poll(scheme).toBe("dark");
+  // a `wa-light` island inside a dark page flips back
+  await page.evaluate(() => document.body.classList.add("wa-light"));
+  await expect.poll(scheme).toBe("light");
+});

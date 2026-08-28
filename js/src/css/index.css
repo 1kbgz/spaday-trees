@@ -7,3 +7,20 @@
 spaday-tree [data-file-tree-virtualized="true"] {
   min-height: var(--trees-min-height, 200px);
 }
+
+/*
+ * Page-mode convention shared with the spaday shell and spaday-dagre: `wa-dark`
+ * on the root switches the tree's color-scheme (the engine's light-dark()
+ * tokens follow it), and `wa-light` flips a nested island back. The engine
+ * sets `color-scheme: light dark` on its own host, so the rule targets
+ * `file-tree-container` directly rather than relying on inheritance.
+ */
+:where(.wa-dark) spaday-tree,
+:where(.wa-dark) spaday-tree file-tree-container {
+  color-scheme: dark;
+}
+
+:where(.wa-light) spaday-tree,
+:where(.wa-light) spaday-tree file-tree-container {
+  color-scheme: light;
+}

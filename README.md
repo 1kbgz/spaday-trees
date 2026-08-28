@@ -27,6 +27,10 @@ The virtualized tree needs a height: give the element or an ancestor one (the qu
 `200px`, overridable through the `--trees-min-height` CSS variable. A tree that still measures zero
 height with non-empty `paths` logs a one-time console warning.
 
+The tree follows the ecosystem's page-mode convention: `wa-dark` on the root (e.g.
+`App.bind_root_class("wa-dark", …)`) switches it to its dark colours and `wa-light` flips a nested
+island back — no consumer CSS needed.
+
 ## Documentation
 
 - [Build a reactive project tree](docs/src/tutorial.md) — guided first application.

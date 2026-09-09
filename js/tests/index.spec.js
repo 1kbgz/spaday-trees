@@ -497,3 +497,37 @@ test("follows the wa-dark page mode", async ({ page }) => {
   await page.evaluate(() => document.body.classList.add("wa-light"));
   await expect.poll(scheme).toBe("light");
 });
+
+test("decoration tones follow the shell palette and the package token", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["README.md"];
+    tree.decorations = { "README.md": { tone: "danger" } };
+    document.body.appendChild(tree);
+  });
+  const row = page
+    .locator('spaday-tree file-tree-container [data-item-path="README.md"]')
+    .first();
+  await expect(row).toHaveClass(/spaday-tone-danger/);
+
+  const tone = () =>
+    row.evaluate((el) =>
+      getComputedStyle(el).getPropertyValue("--spaday-tone-color").trim(),
+    );
+  // the shell tone drives it...
+  await page.evaluate(() =>
+    document.documentElement.style.setProperty("--spa-danger", "rgb(1, 2, 3)"),
+  );
+  expect(await tone()).toBe("rgb(1, 2, 3)");
+  // ...and the package token, set on an ancestor, outranks it
+  await page.evaluate(() =>
+    document.documentElement.style.setProperty(
+      "--spa-trees-tone-danger",
+      "rgb(4, 5, 6)",
+    ),
+  );
+  expect(await tone()).toBe("rgb(4, 5, 6)");
+});

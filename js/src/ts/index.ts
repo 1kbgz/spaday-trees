@@ -68,9 +68,9 @@ const TONE_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
 
 /*
  * Injected into the engine shadow root through its `unsafeCSS` option (the
- * only supported way to style engine-owned rows). Built-in tones follow the
- * engine's light-dark() token pattern and can be overridden from the page via
- * `--trees-tone-*` custom properties, which inherit into the shadow root.
+ * only supported way to style engine-owned rows). The tone colors resolve in
+ * the host stylesheet and inherit in through the shadow boundary; override
+ * them from the page with `--spa-trees-tone-*` (see TOKENS).
  */
 const DECORATION_CSS = `
   [data-item-git-status] > [data-item-section="decoration"] {
@@ -88,11 +88,11 @@ const DECORATION_CSS = `
       color: var(--spaday-tone-color, inherit);
     }
   }
-  .spaday-tone-info { --spaday-tone-color: var(--trees-tone-info, light-dark(#0969da, #58a6ff)); }
-  .spaday-tone-success { --spaday-tone-color: var(--trees-tone-success, light-dark(#1a7f37, #3fb950)); }
-  .spaday-tone-warning { --spaday-tone-color: var(--trees-tone-warning, light-dark(#9a6700, #d29922)); }
-  .spaday-tone-danger { --spaday-tone-color: var(--trees-tone-danger, light-dark(#cf222e, #f85149)); }
-  .spaday-tone-muted { --spaday-tone-color: var(--trees-tone-muted, light-dark(#59636e, #9198a1)); }
+  .spaday-tone-info { --spaday-tone-color: var(--_spa-trees-tone-info); }
+  .spaday-tone-success { --spaday-tone-color: var(--_spa-trees-tone-success); }
+  .spaday-tone-warning { --spaday-tone-color: var(--_spa-trees-tone-warning); }
+  .spaday-tone-danger { --spaday-tone-color: var(--_spa-trees-tone-danger); }
+  .spaday-tone-muted { --spaday-tone-color: var(--_spa-trees-tone-muted); }
 `;
 
 /**

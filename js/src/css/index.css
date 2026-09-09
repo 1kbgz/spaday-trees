@@ -1,11 +1,50 @@
 /*
+ * Themeable colors, resolved once here and read by the engine's shadow stylesheet (custom
+ * properties inherit through shadow boundaries). Each chains: the package token
+ * --spa-trees-* (the documented override, read-only so a token set on an ancestor — an
+ * App-level theme — still reaches the tree), then the older --trees-tone-* spelling kept as
+ * an alias, then the shell token the tone belongs to, then the engine's own light-dark()
+ * literal so a standalone page stays coherent in both modes.
+ *
+ * The --trees-* prefix belongs to the Pierre engine (which owns --trees-accent, --trees-bg
+ * and friends); these tones were never engine tokens, so they move to the --spa-trees-*
+ * namespace every spaday component package uses and stop squatting in someone else's.
+ */
+spaday-tree {
+  --_spa-trees-tone-info: var(
+    --spa-trees-tone-info,
+    var(--trees-tone-info, var(--spa-info, light-dark(#0969da, #58a6ff)))
+  );
+  --_spa-trees-tone-success: var(
+    --spa-trees-tone-success,
+    var(--trees-tone-success, var(--spa-success, light-dark(#1a7f37, #3fb950)))
+  );
+  --_spa-trees-tone-warning: var(
+    --spa-trees-tone-warning,
+    var(--trees-tone-warning, var(--spa-warning, light-dark(#9a6700, #d29922)))
+  );
+  --_spa-trees-tone-danger: var(
+    --spa-trees-tone-danger,
+    var(--trees-tone-danger, var(--spa-danger, light-dark(#cf222e, #f85149)))
+  );
+  --_spa-trees-tone-muted: var(
+    --spa-trees-tone-muted,
+    var(--trees-tone-muted, var(--spa-muted, light-dark(#59636e, #9198a1)))
+  );
+  --_spa-trees-min-height: var(
+    --spa-trees-min-height,
+    var(--trees-min-height, 200px)
+  );
+}
+
+/*
  * The engine's shadow stylesheet sizes the virtualized host with
  * `height: 100%`, which collapses to zero inside parents that impose no
  * height. Give it a usable floor so rows still render; override with
  * `--trees-min-height` (or give the element or an ancestor a height).
  */
 spaday-tree [data-file-tree-virtualized="true"] {
-  min-height: var(--trees-min-height, 200px);
+  min-height: var(--_spa-trees-min-height);
 }
 
 /*

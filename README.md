@@ -12,6 +12,8 @@
 [![License](https://img.shields.io/github/license/1kbgz/spaday-trees)](https://github.com/1kbgz/spaday-trees)
 [![PyPI](https://img.shields.io/pypi/v/spaday-trees.svg)](https://pypi.python.org/pypi/spaday-trees)
 
+[![Preview of trees page](https://raw.githubusercontent.com/1kbgz/spaday-trees/main/docs/img/preview.webp)](./spaday_trees/example.py)
+
 ## Overview
 
 `spaday-trees` wraps Pierre's imperative `FileTree` in a `<spaday-tree>` custom element and exposes it

@@ -44,7 +44,10 @@ jobs:
           version: 22.x
 
       - name: Install unreleased spaday 0.8.2
-        run: uv pip install "spaday @ git+https://github.com/1kbgz/spaday.git@4af0e2060e4beecdf37d57a26aa5a5145044f324"
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo install --locked wasm-bindgen-cli --version 0.2.127
+          uv pip install "spaday @ git+https://github.com/1kbgz/spaday.git@4af0e2060e4beecdf37d57a26aa5a5145044f324"
 
       - name: Install dependencies
         run: make develop

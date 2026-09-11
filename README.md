@@ -14,6 +14,9 @@
 
 [![Preview of trees page](https://raw.githubusercontent.com/1kbgz/spaday-trees/main/docs/img/preview.webp)](./spaday_trees/example.py)
 
+**[Run the complete example in your browser](https://1kbgz.github.io/spaday-trees/lite/)** — Python,
+transports synchronization, endpoint handlers, and background updates run locally through Pyodide.
+
 ## Overview
 
 `spaday-trees` wraps Pierre's imperative `FileTree` in a `<spaday-tree>` custom element and exposes it
@@ -99,6 +102,9 @@ rendered row carries `[data-item-path]` (its path, directories with a trailing `
 `[role="treeitem"]`.
 
 ## Run the local example
+
+To run without installing anything, open the
+[hosted Pyodide example](https://1kbgz.github.io/spaday-trees/lite/).
 
 ```bash
 python -m pip install -e ".[examples]"

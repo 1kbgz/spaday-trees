@@ -1,0 +1,120 @@
+const PYODIDE_VERSION = "314.0.4";
+let pyodide;
+
+const ready = (async () => {
+  self.postMessage({ type: "status", message: "Loading Pyodide…" });
+  const { loadPyodide } = await import(
+    `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`
+  );
+  pyodide = await loadPyodide();
+  await pyodide.loadPackage(["micropip", "anyio"]);
+
+  self.postMessage({ type: "status", message: "Installing example…" });
+  const response = await fetch(new URL("./wheels.json", self.location.href));
+  if (!response.ok)
+    throw new Error(`wheel manifest returned ${response.status}`);
+  const wheels = await response.json();
+  const urls = Object.fromEntries(
+    Object.entries(wheels).map(([name, path]) => [
+      name,
+      new URL(path, self.location.href).href,
+    ]),
+  );
+  pyodide.globals.set("wheels_json", JSON.stringify(urls));
+  return pyodide.runPythonAsync(`
+import asyncio
+import json
+import micropip
+
+wheels = json.loads(wheels_json)
+await micropip.install([
+    wheels["spaday"],
+    wheels["transports"],
+    "starlette",
+    "uvicorn",
+])
+await micropip.install(wheels["trees"], deps=False)
+
+import inspect
+import spaday
+
+if "provides" not in inspect.signature(spaday.ComponentPackage).parameters:
+    released_component_package = spaday.ComponentPackage
+
+    def compatible_component_package(*args, provides=None, requires=None, **kwargs):
+        return released_component_package(*args, **kwargs)
+
+    spaday.ComponentPackage = compatible_component_package
+
+from spaday_trees import example
+
+connection = "browser"
+
+def local_wires(messages):
+    return list(messages.get(connection, []))
+
+def receive_wire(frame):
+    return json.dumps(local_wires(example.server.recv(connection, frame)))
+
+def flush_server():
+    return json.dumps(local_wires(example.server.flush()))
+
+class LocalRequest:
+    def __init__(self, event_type, body):
+        self.path_params = {"event_type": event_type}
+        self._body = body
+
+    async def json(self):
+        return self._body
+
+async def call_endpoint(event_type, body_json):
+    response = await example.tree_event(LocalRequest(event_type, json.loads(body_json)))
+    return json.dumps({
+        "status": response.status_code,
+        "body": json.loads(bytes(response.body).decode()),
+        "wires": local_wires(example.server.flush()),
+    })
+
+opening = example.server.open(connection, "json")
+asyncio.create_task(example.rotate_server_file())
+
+json.dumps({
+    "tree": example.page.to_node(),
+    "style": example.styles,
+    "wires": opening,
+})
+`);
+})();
+
+let queue = Promise.resolve();
+
+async function handle(message) {
+  const snapshot = await ready;
+  if (message.type === "start") {
+    self.postMessage({ type: "snapshot", payload: JSON.parse(snapshot) });
+  } else if (message.type === "wire") {
+    pyodide.globals.set("wire_frame", message.frame);
+    const wires = JSON.parse(pyodide.runPython("receive_wire(wire_frame)"));
+    if (wires.length) self.postMessage({ type: "wires", wires });
+  } else if (message.type === "flush") {
+    const wires = JSON.parse(pyodide.runPython("flush_server()"));
+    if (wires.length) self.postMessage({ type: "wires", wires });
+  } else if (message.type === "endpoint") {
+    pyodide.globals.set("event_type", message.eventType);
+    pyodide.globals.set("body_json", JSON.stringify(message.body));
+    const result = JSON.parse(
+      await pyodide.runPythonAsync(
+        "await call_endpoint(event_type, body_json)",
+      ),
+    );
+    self.postMessage({ type: "endpoint", id: message.id, ...result });
+  }
+}
+
+self.addEventListener("message", (event) => {
+  queue = queue
+    .then(() => handle(event.data))
+    .catch((error) => {
+      self.postMessage({ type: "error", message: String(error) });
+    });
+});

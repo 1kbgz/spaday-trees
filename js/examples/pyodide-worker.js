@@ -35,17 +35,6 @@ await micropip.install([
 ])
 await micropip.install(wheels["trees"], deps=False)
 
-import inspect
-import spaday
-
-if "provides" not in inspect.signature(spaday.ComponentPackage).parameters:
-    released_component_package = spaday.ComponentPackage
-
-    def compatible_component_package(*args, provides=None, requires=None, **kwargs):
-        return released_component_package(*args, **kwargs)
-
-    spaday.ComponentPackage = compatible_component_package
-
 from spaday_trees import example
 
 connection = "browser"

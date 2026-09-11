@@ -36,8 +36,8 @@ install:  ## install python library
 #########
 .PHONY: lint-py lint-js lint lints
 lint-py:  ## run python linter with ruff
-	python -m ruff check spaday_trees tools
-	python -m ruff format --check spaday_trees tools
+	python -m ruff check spaday_trees js/examples/build_pyodide_example.py
+	python -m ruff format --check spaday_trees js/examples/build_pyodide_example.py
 
 lint-js:  ## run js linter
 	cd js; pnpm lint
@@ -112,7 +112,7 @@ pyodide-example: build  ## build the standalone Pyodide example into dist/lite
 	rm -rf dist/lite dist/pyodide-deps
 	mkdir -p dist/lite dist/pyodide-deps
 	python -m pip download --no-deps --only-binary=:all: --platform pyemscripten_2026_0_wasm32 --python-version 314 --implementation cp --abi cp314 --dest dist/pyodide-deps "spaday==0.8.1" "transports==0.8.0"
-	python tools/build_pyodide_example.py dist/lite "$(firstword $(wildcard dist/spaday_trees-*.whl))" dist/pyodide-deps
+	python js/examples/build_pyodide_example.py dist/lite "$(firstword $(wildcard dist/spaday_trees-*.whl))" dist/pyodide-deps
 	cp js/examples/pyodide.html dist/lite/index.html
 	cp js/examples/pyodide-worker.js dist/lite/
 test-pyodide-example: pyodide-example  ## run the standalone Pyodide example in Chromium

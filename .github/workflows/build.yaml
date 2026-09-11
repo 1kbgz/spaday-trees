@@ -43,6 +43,12 @@ jobs:
         with:
           version: 22.x
 
+      - name: Install unreleased spaday 0.8.2
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo install --locked wasm-bindgen-cli --version 0.2.127
+          uv pip install "spaday @ git+https://github.com/1kbgz/spaday.git@4af0e2060e4beecdf37d57a26aa5a5145044f324"
+
       - name: Install dependencies
         run: make develop
 
@@ -57,6 +63,15 @@ jobs:
 
       - name: Test
         run: make coverage
+
+      - name: Build and test browser example
+        run: make test-pyodide-example
+
+      - name: Upload browser example
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: pyodide-example
+          path: dist/lite
 
       - name: Upload test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1

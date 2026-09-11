@@ -24,6 +24,15 @@ jobs:
       - name: Setup Python
         uses: actions-ext/python/setup@a3f3953ef26a519ab7b6a56b94d06fa1b31ab3f3
 
+      - name: Install unreleased spaday 0.8.2
+        run: SKIP_HATCH_JS=1 uv pip install "spaday @ git+https://github.com/1kbgz/spaday.git@4af0e2060e4beecdf37d57a26aa5a5145044f324"
+
+      - name: Setup Node.js
+        uses: actions-ext/node/setup@b0536d87c5e92c924bc8667f566f620758280825
+        with:
+          version: 22.x
+        if: github.event_name == 'workflow_dispatch'
+
       - name: Download distributions
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
@@ -44,12 +53,29 @@ jobs:
 
       - name: Install from source (manual trigger)
         run: |
+          make requirements-js
           uv pip install .[develop]
           uv pip install "yardang[themes]"
         if: github.event_name == 'workflow_dispatch'
 
       - name: Build documentation
         run: yardang build
+
+      - name: Download browser example
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        with:
+          name: pyodide-example
+          path: docs/html/lite
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+        if: github.event_name == 'workflow_run'
+
+      - name: Build browser example for manual publish
+        run: |
+          make pyodide-example
+          cp -r dist/lite docs/html/lite
+        if: github.event_name == 'workflow_dispatch'
 
       - name: Publish documentation
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # v4.1.0

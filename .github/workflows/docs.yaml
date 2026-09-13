@@ -25,7 +25,7 @@ jobs:
         uses: actions-ext/python/setup@ec67f82b3bd863948308a41ecb9e70547cbb19c7
 
       - name: Setup Node.js
-        uses: actions-ext/node/setup@b0536d87c5e92c924bc8667f566f620758280825
+        uses: actions-ext/node/setup@34d0fdbdca883e4d0a2da0bcd0fa460fd40b80e7
         with:
           version: 22.x
         if: github.event_name == 'workflow_dispatch'

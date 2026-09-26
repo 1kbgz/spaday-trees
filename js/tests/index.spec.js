@@ -75,6 +75,69 @@ test("renders rows in an auto-height container via the min-height fallback", asy
     .toBeGreaterThan(0);
 });
 
+test("maps shell and package tokens onto Pierre chrome", async ({ page }) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.paths = ["README.md", "src/index.ts"];
+    tree.expanded_paths = ["src/"];
+    tree.selected_paths = ["README.md"];
+    tree.git_status = [{ path: "src/index.ts", status: "modified" }];
+    for (const [name, value] of Object.entries({
+      "--spa-surface": "#0a141e",
+      "--spa-surface-2": "#28323c",
+      "--spa-border": "#46505a",
+      "--spa-muted": "#646e78",
+      "--spa-accent": "#828c96",
+      "--spa-info": "#a0aab4",
+    }))
+      tree.style.setProperty(name, value);
+    document.body.appendChild(tree);
+  });
+
+  const styles = await page
+    .locator("spaday-tree file-tree-container")
+    .evaluate((host) => {
+      const shadow = host.shadowRoot;
+      const selected = shadow.querySelector('[data-item-path="README.md"]');
+      const modified = shadow.querySelector(
+        '[data-item-path="src/index.ts"] [data-item-section="content"]',
+      );
+      const search = shadow.querySelector("[data-file-tree-search-input]");
+      return {
+        background: getComputedStyle(host).backgroundColor,
+        color: getComputedStyle(host).color,
+        searchBackground: getComputedStyle(search).backgroundColor,
+        searchBorder: getComputedStyle(search).borderColor,
+        selectedBackground: getComputedStyle(selected).backgroundColor,
+        selectedColor: getComputedStyle(selected).color,
+        modifiedColor: getComputedStyle(modified).color,
+      };
+    });
+  expect(styles).toEqual({
+    background: "rgb(10, 20, 30)",
+    color: "rgb(100, 110, 120)",
+    searchBackground: "rgb(10, 20, 30)",
+    searchBorder: "rgb(70, 80, 90)",
+    selectedBackground: "rgb(130, 140, 150)",
+    selectedColor: "rgb(10, 20, 30)",
+    modifiedColor: "rgb(160, 170, 180)",
+  });
+
+  await page
+    .locator("spaday-tree")
+    .evaluate((tree) =>
+      tree.style.setProperty("--trees-bg-override", "#c8d2dc"),
+    );
+  await expect
+    .poll(() =>
+      page
+        .locator("spaday-tree file-tree-container")
+        .evaluate((host) => getComputedStyle(host).backgroundColor),
+    )
+    .toBe("rgb(200, 210, 220)");
+});
+
 test("warns once when the tree measures zero height with paths", async ({
   page,
 }) => {

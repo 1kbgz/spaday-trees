@@ -29,6 +29,15 @@ Programmatic selection expands ancestor directories and scrolls the first select
 Path replacement preserves expanded directories that exist in both path sets. Assigning an unchanged
 path list does not rebuild the Pierre model.
 
+## Theme tokens
+
+`spaday_trees.TOKENS` lists each Python `css()` keyword, CSS custom property, and description.
+`spaday_trees.TOKEN_FALLBACKS` maps those keywords to their shell CSS properties. The surface, text,
+border, search, selection, scrollbar, decoration, and Git-status tokens follow the shell palette by
+default. `spa_trees_min_height` has no shell fallback and defaults to `200px`.
+
+Pierre's `--trees-*-override` properties remain supported and take priority over the package mapping.
+
 ## `package`
 
 `spaday_trees.package` is named `trees`. It serves the self-contained Pierre wrapper bundle from

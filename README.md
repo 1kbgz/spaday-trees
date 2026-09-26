@@ -29,12 +29,17 @@ string is coerced to a one-element list; other non-list values raise a `TypeErro
 
 The virtualized tree needs a height: give the element or an ancestor one (the quick example uses
 `.style(height="22rem")`). Without one, the package stylesheet applies a `min-height` fallback of
-`200px`, overridable through the `--trees-min-height` CSS variable. A tree that still measures zero
+`200px`, overridable through `--spa-trees-min-height` (`--trees-min-height` remains an alias). A tree that still measures zero
 height with non-empty `paths` logs a one-time console warning.
 
 The tree follows the ecosystem's page-mode convention: `wa-dark` on the root (e.g.
 `App.bind_root_class("wa-dark", …)`) switches it to its dark colours and `wa-light` flips a nested
 island back — no consumer CSS needed.
+
+The tree chrome follows the shell palette. Set `--spa-surface`, `--spa-border`, `--spa-muted`,
+`--spa-accent`, and the status tones once to theme the tree with the rest of the page. Use the
+`--spa-trees-*` tokens listed in `spaday_trees.TOKENS` for tree-specific overrides. Existing
+Pierre `--trees-*-override` values still take priority.
 
 ## Documentation
 

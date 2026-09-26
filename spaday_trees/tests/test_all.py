@@ -4,7 +4,7 @@ from pathlib import Path
 from spaday import generate
 from spaday.bootstrap import bootstrap
 
-from spaday_trees import TOKENS, Tree, package
+from spaday_trees import TOKEN_FALLBACKS, TOKENS, Tree, package
 
 
 def test_tree_serializes_the_wrapper_properties():
@@ -46,11 +46,11 @@ def test_tokens_documents_exactly_what_the_stylesheet_reads():
     import re
 
     css = re.sub(r"\s+", "", (Path(__file__).parents[2] / "js" / "src" / "css" / "index.css").read_text())
-    read = set(re.findall(r"var\((--spa-trees-[a-z-]+)[,)]", css))
+    read = set(re.findall(r"var\((--spa-trees-[a-z0-9-]+)[,)]", css))
     assert read == {prop for prop, _ in TOKENS.values()}
     # a public token must never be defined here, or a token set on an ancestor (an App-level theme)
     # would lose to the package default
-    assert not re.findall(r"(?<![-\w])(--spa-trees-[a-z-]+):", css)
+    assert not re.findall(r"(?<![-\w])(--spa-trees-[a-z0-9-]+):", css)
 
 
 def test_tones_chain_through_the_legacy_spelling_to_the_shell():
@@ -61,3 +61,16 @@ def test_tones_chain_through_the_legacy_spelling_to_the_shell():
         definition = re.search(rf"--_spa-trees-tone-{tone}:([^;]+);", css).group(1)
         assert f"var(--trees-tone-{tone}," in definition  # older spelling still works
         assert f"var(--spa-{shell}," in definition  # and the shell tone is the default
+
+
+def test_token_fallbacks_are_structured_and_match_the_stylesheet():
+    import re
+
+    css = re.sub(r"\s+", "", (Path(__file__).parents[2] / "js" / "src" / "css" / "index.css").read_text())
+    assert "spa_trees_min_height" not in TOKEN_FALLBACKS
+    for kwarg, shell in TOKEN_FALLBACKS.items():
+        prop = TOKENS[kwarg][0]
+        name = prop.removeprefix("--spa-trees-")
+        definition = re.search(rf"--_spa-trees-{name}:([^;]+);", css).group(1)
+        assert f"var({prop}," in definition
+        assert f"var({shell}," in definition

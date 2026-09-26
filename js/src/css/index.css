@@ -1,16 +1,74 @@
 /*
- * Themeable colors, resolved once here and read by the engine's shadow stylesheet (custom
- * properties inherit through shadow boundaries). Each chains: the package token
- * --spa-trees-* (the documented override, read-only so a token set on an ancestor — an
- * App-level theme — still reaches the tree), then the older --trees-tone-* spelling kept as
- * an alias, then the shell token the tone belongs to, then the engine's own light-dark()
- * literal so a standalone page stays coherent in both modes.
- *
- * The --trees-* prefix belongs to the Pierre engine (which owns --trees-accent, --trees-bg
- * and friends); these tones were never engine tokens, so they move to the --spa-trees-*
- * namespace every spaday component package uses and stop squatting in someone else's.
+ * Package tokens inherit from the shell palette and retain standalone light/dark defaults.
+ * Pierre's direct --trees-*-override hooks still take priority over the --trees-theme-* values
+ * assigned to its host below.
  */
 spaday-tree {
+  --_spa-trees-surface: var(
+    --spa-trees-surface,
+    var(--spa-surface, light-dark(#f8f8f8, #141415))
+  );
+  --_spa-trees-surface-2: var(
+    --spa-trees-surface-2,
+    var(--spa-surface-2, light-dark(#eeeeef, #222224))
+  );
+  --_spa-trees-text: var(
+    --spa-trees-text,
+    var(--spa-muted, light-dark(#6c6c71, #adadb1))
+  );
+  --_spa-trees-muted: var(
+    --spa-trees-muted,
+    var(--spa-muted, light-dark(#84848a, #84848a))
+  );
+  --_spa-trees-border: var(
+    --spa-trees-border,
+    var(--spa-border, light-dark(#eeeeef, #2a2a2c))
+  );
+  --_spa-trees-focus: var(--spa-trees-focus, var(--spa-accent, #009fff));
+  --_spa-trees-search-surface: var(
+    --spa-trees-search-surface,
+    var(--spa-surface, light-dark(#f8f8f8, #141415))
+  );
+  --_spa-trees-search-text: var(
+    --spa-trees-search-text,
+    var(--spa-muted, light-dark(#6c6c71, #adadb1))
+  );
+  --_spa-trees-scrollbar: var(
+    --spa-trees-scrollbar,
+    var(--spa-muted, light-dark(#84848a, #84848a))
+  );
+  --_spa-trees-selection-surface: var(
+    --spa-trees-selection-surface,
+    var(--spa-accent, #009fff)
+  );
+  --_spa-trees-selection-text: var(
+    --spa-trees-selection-text,
+    var(--spa-surface, light-dark(#f8f8f8, #141415))
+  );
+  --_spa-trees-git-added: var(
+    --spa-trees-git-added,
+    var(--spa-success, light-dark(#16a994, #00cab1))
+  );
+  --_spa-trees-git-deleted: var(
+    --spa-trees-git-deleted,
+    var(--spa-danger, light-dark(#ff2e3f, #ff6762))
+  );
+  --_spa-trees-git-ignored: var(
+    --spa-trees-git-ignored,
+    var(--spa-muted, light-dark(#adadb1, #4a4a4e))
+  );
+  --_spa-trees-git-modified: var(
+    --spa-trees-git-modified,
+    var(--spa-info, light-dark(#1ca1c7, #08c0ef))
+  );
+  --_spa-trees-git-renamed: var(
+    --spa-trees-git-renamed,
+    var(--spa-warning, light-dark(#d5a910, #ffd452))
+  );
+  --_spa-trees-git-untracked: var(
+    --spa-trees-git-untracked,
+    var(--spa-success, light-dark(#16a994, #00cab1))
+  );
   --_spa-trees-tone-info: var(
     --spa-trees-tone-info,
     var(--trees-tone-info, var(--spa-info, light-dark(#0969da, #58a6ff)))
@@ -35,6 +93,26 @@ spaday-tree {
     --spa-trees-min-height,
     var(--trees-min-height, 200px)
   );
+}
+
+spaday-tree file-tree-container {
+  --trees-theme-sidebar-bg: var(--_spa-trees-surface);
+  --trees-theme-list-hover-bg: var(--_spa-trees-surface-2);
+  --trees-theme-sidebar-fg: var(--_spa-trees-text);
+  --trees-theme-sidebar-header-fg: var(--_spa-trees-muted);
+  --trees-theme-sidebar-border: var(--_spa-trees-border);
+  --trees-theme-focus-ring: var(--_spa-trees-focus);
+  --trees-theme-input-bg: var(--_spa-trees-search-surface);
+  --trees-theme-input-fg: var(--_spa-trees-search-text);
+  --trees-theme-scrollbar-thumb: var(--_spa-trees-scrollbar);
+  --trees-theme-list-active-selection-bg: var(--_spa-trees-selection-surface);
+  --trees-theme-list-active-selection-fg: var(--_spa-trees-selection-text);
+  --trees-theme-git-added-fg: var(--_spa-trees-git-added);
+  --trees-theme-git-deleted-fg: var(--_spa-trees-git-deleted);
+  --trees-theme-git-ignored-fg: var(--_spa-trees-git-ignored);
+  --trees-theme-git-modified-fg: var(--_spa-trees-git-modified);
+  --trees-theme-git-renamed-fg: var(--_spa-trees-git-renamed);
+  --trees-theme-git-untracked-fg: var(--_spa-trees-git-untracked);
 }
 
 /*

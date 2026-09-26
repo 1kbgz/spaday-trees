@@ -49,7 +49,7 @@ export interface InitOutput {
     readonly encode_frame: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number, number, number];
     readonly interpret: (a: number, b: number, c: any) => [number, number];
     readonly parse_cem: (a: number, b: number) => [number, number, number, number];
-    readonly wasm_bindgen_1019a2f937c7d9b2___convert__closures_____invoke___wasm_bindgen_1019a2f937c7d9b2___JsValue__core_ed718c3d60ebd546___result__Result_____wasm_bindgen_1019a2f937c7d9b2___JsError___true_: (a: number, b: number, c: any) => [number, number];
+    readonly wasm_bindgen_106671a2228cc70f___convert__closures_____invoke___wasm_bindgen_106671a2228cc70f___JsValue__core_ed718c3d60ebd546___result__Result_____wasm_bindgen_106671a2228cc70f___JsError___true_: (a: number, b: number, c: any) => [number, number];
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

@@ -266,11 +266,15 @@ the first selected path is scrolled into view. This reveal behaviour is a suppor
 string is coerced to a one-element list; other non-list values raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
 <p>The virtualized tree needs a height: give the element or an ancestor one (the quick example uses
 <code class="docutils literal notranslate"><span class="pre">.style(height=&quot;22rem&quot;)</span></code>). Without one, the package stylesheet applies a <code class="docutils literal notranslate"><span class="pre">min-height</span></code> fallback of
-<code class="docutils literal notranslate"><span class="pre">200px</span></code>, overridable through the <code class="docutils literal notranslate"><span class="pre">--trees-min-height</span></code> CSS variable. A tree that still measures zero
+<code class="docutils literal notranslate"><span class="pre">200px</span></code>, overridable through <code class="docutils literal notranslate"><span class="pre">--spa-trees-min-height</span></code> (<code class="docutils literal notranslate"><span class="pre">--trees-min-height</span></code> remains an alias). A tree that still measures zero
 height with non-empty <code class="docutils literal notranslate"><span class="pre">paths</span></code> logs a one-time console warning.</p>
 <p>The tree follows the ecosystem’s page-mode convention: <code class="docutils literal notranslate"><span class="pre">wa-dark</span></code> on the root (e.g.
 <code class="docutils literal notranslate"><span class="pre">App.bind_root_class(&quot;wa-dark&quot;,</span> <span class="pre">…)</span></code>) switches it to its dark colours and <code class="docutils literal notranslate"><span class="pre">wa-light</span></code> flips a nested
 island back — no consumer CSS needed.</p>
+<p>The tree chrome follows the shell palette. Set <code class="docutils literal notranslate"><span class="pre">--spa-surface</span></code>, <code class="docutils literal notranslate"><span class="pre">--spa-border</span></code>, <code class="docutils literal notranslate"><span class="pre">--spa-muted</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--spa-accent</span></code>, and the status tones once to theme the tree with the rest of the page. Use the
+<code class="docutils literal notranslate"><span class="pre">--spa-trees-*</span></code> tokens listed in <code class="docutils literal notranslate"><span class="pre">spaday_trees.TOKENS</span></code> for tree-specific overrides. Existing
+Pierre <code class="docutils literal notranslate"><span class="pre">--trees-*-override</span></code> values still take priority.</p>
 </section>
 <section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>

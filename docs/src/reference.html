@@ -305,6 +305,14 @@ Programmatic selection expands ancestor directories and scrolls the first select
 <p>Path replacement preserves expanded directories that exist in both path sets. Assigning an unchanged
 path list does not rebuild the Pierre model.</p>
 </section>
+<section id="theme-tokens">
+<h2>Theme tokens<a class="headerlink" href="#theme-tokens" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">spaday_trees.TOKENS</span></code> maps each Python <code class="docutils literal notranslate"><span class="pre">css()</span></code> keyword to a <code class="docutils literal notranslate"><span class="pre">spaday.Token</span></code> containing its CSS custom
+property, description, and optional shell fallback. The surface, text, border, search, selection,
+scrollbar, decoration, and Git-status tokens follow the shell palette by default.
+<code class="docutils literal notranslate"><span class="pre">spa_trees_min_height</span></code> has no shell fallback and defaults to <code class="docutils literal notranslate"><span class="pre">200px</span></code>.</p>
+<p>Pierre’s <code class="docutils literal notranslate"><span class="pre">--trees-*-override</span></code> properties remain supported and take priority over the package mapping.</p>
+</section>
 <section id="package">
 <h2><code class="docutils literal notranslate"><span class="pre">package</span></code><a class="headerlink" href="#package" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">spaday_trees.package</span></code> is named <code class="docutils literal notranslate"><span class="pre">trees</span></code>. It serves the self-contained Pierre wrapper bundle from
@@ -374,6 +382,7 @@ path list does not rebuild the Pierre model.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#events">Events</a></li>
+<li><a class="reference internal" href="#theme-tokens">Theme tokens</a></li>
 <li><a class="reference internal" href="#package"><code class="docutils literal notranslate"><span class="pre">package</span></code></a></li>
 </ul>
 </li>

@@ -87,6 +87,7 @@ test("maps shell and package tokens onto Pierre chrome", async ({ page }) => {
       "--spa-surface": "#0a141e",
       "--spa-surface-2": "#28323c",
       "--spa-border": "#46505a",
+      "--spa-text": "#505a64",
       "--spa-muted": "#646e78",
       "--spa-accent": "#828c96",
       "--spa-info": "#a0aab4",
@@ -116,7 +117,7 @@ test("maps shell and package tokens onto Pierre chrome", async ({ page }) => {
     });
   expect(styles).toEqual({
     background: "rgb(10, 20, 30)",
-    color: "rgb(100, 110, 120)",
+    color: "rgb(80, 90, 100)",
     searchBackground: "rgb(10, 20, 30)",
     searchBorder: "rgb(70, 80, 90)",
     selectedBackground: "rgb(130, 140, 150)",

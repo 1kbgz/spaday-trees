@@ -14,7 +14,7 @@ spaday-tree {
   );
   --_spa-trees-text: var(
     --spa-trees-text,
-    var(--spa-muted, light-dark(#6c6c71, #adadb1))
+    var(--spa-text, light-dark(#6c6c71, #adadb1))
   );
   --_spa-trees-muted: var(
     --spa-trees-muted,
@@ -31,7 +31,7 @@ spaday-tree {
   );
   --_spa-trees-search-text: var(
     --spa-trees-search-text,
-    var(--spa-muted, light-dark(#6c6c71, #adadb1))
+    var(--spa-text, light-dark(#6c6c71, #adadb1))
   );
   --_spa-trees-scrollbar: var(
     --spa-trees-scrollbar,

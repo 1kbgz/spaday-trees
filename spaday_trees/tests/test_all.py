@@ -58,7 +58,9 @@ def test_tones_chain_through_the_legacy_spelling_to_the_shell():
 
     css = re.sub(r"\s+", "", (Path(__file__).parents[2] / "js" / "src" / "css" / "index.css").read_text())
     for tone, shell in (("info", "info"), ("success", "success"), ("warning", "warning"), ("danger", "danger"), ("muted", "muted")):
-        definition = re.search(rf"--_spa-trees-tone-{tone}:([^;]+);", css).group(1)
+        match = re.search(rf"--_spa-trees-tone-{tone}:([^;]+);", css)
+        assert match is not None
+        definition = match.group(1)
         assert f"var(--trees-tone-{tone}," in definition  # older spelling still works
         assert f"var(--spa-{shell}," in definition  # and the shell tone is the default
 
@@ -72,6 +74,8 @@ def test_token_fallbacks_are_structured_and_match_the_stylesheet():
         prop = token.property
         shell = token.fallback
         name = prop.removeprefix("--spa-trees-")
-        definition = re.search(rf"--_spa-trees-{name}:([^;]+);", css).group(1)
+        match = re.search(rf"--_spa-trees-{name}:([^;]+);", css)
+        assert match is not None
+        definition = match.group(1)
         assert f"var({prop}," in definition
         assert f"var({shell}," in definition

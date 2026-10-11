@@ -53,6 +53,7 @@ develop = [
     "hatchling",
     "httpx",
     "mdformat",
+    "mdformat-frontmatter",
     "mdformat-tables>=1",
     "pytest",
     "pytest-cov",
@@ -103,7 +104,7 @@ replace = '"version": "{new_version}"'
 branch = true
 omit = [
     "spaday_trees/example.py",
-    "spaday_trees/tests/integration/",
+    "spaday_trees/tests/integration/*",
 ]
 
 [tool.coverage.report]

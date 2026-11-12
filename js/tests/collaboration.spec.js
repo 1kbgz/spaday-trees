@@ -131,6 +131,59 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       };
       const state = (page) =>
         page.locator("#state").evaluate((el) => JSON.parse(el.textContent));
+      await bob.setViewportSize({ width: 1000, height: 700 });
+      await title(alice).hover({ position: { x: 12, y: 12 } });
+      const aliceCursor = bob.locator(
+        ".remote-pointer.person-alice .remote-cursor",
+      );
+      await expect(aliceCursor).toBeVisible();
+      await expect(aliceCursor).toHaveText("Alice");
+      const assertCursorAt = async (target) => {
+        await expect
+          .poll(async () => {
+            const bounds = await target.boundingBox();
+            const cursor = await aliceCursor.boundingBox();
+            return (
+              !!bounds &&
+              !!cursor &&
+              cursor.x >= bounds.x &&
+              cursor.x <= bounds.x + bounds.width &&
+              cursor.y >= bounds.y &&
+              cursor.y <= bounds.y + bounds.height
+            );
+          })
+          .toBe(true);
+      };
+      await assertCursorAt(title(bob));
+      await expect(
+        bob.locator(".remote-pointer.person-alice .remote-hover"),
+      ).toHaveCSS("pointer-events", "none");
+      await title(bob).click();
+      await select(bob, "src/README.md");
+      await expect(aliceCursor).toHaveCount(0);
+      // Row identity still resolves when the two users have different forms open.
+      const aliceRow = alice.locator(
+        '#records [data-item-path="docs/README.md"]',
+      );
+      const bobRow = bob.locator('#records [data-item-path="docs/README.md"]');
+      await aliceRow.hover();
+      await expect(aliceCursor).toBeVisible();
+      await assertCursorAt(bobRow);
+      await bob.evaluate(() => {
+        document.body.style.minHeight = "1600px";
+        window.scrollTo(0, 100);
+      });
+      await assertCursorAt(bobRow);
+      await bob.evaluate(() => window.scrollTo(0, 1000));
+      await expect(aliceCursor).toHaveCount(0);
+      await bob.evaluate(() => {
+        window.scrollTo(0, 0);
+        document.body.style.minHeight = "";
+      });
+      await expect(aliceCursor).toBeVisible();
+      await alice.mouse.move(5, 5);
+      await expect(aliceCursor).toHaveCount(0);
+      await select(bob, "docs/README.md");
       await alice.locator("#records").evaluate((el) => {
         window.originalPeer = el;
       });
@@ -171,6 +224,8 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         ).status(),
       ).toBe(403);
       await select(bob, "docs/README.md");
+      await title(alice).hover();
+      await expect(aliceCursor).toBeVisible();
       await contexts[0].setOffline(true);
       // Offline emulation does not close an existing WebSocket.
       await alice.evaluate(() =>
@@ -178,6 +233,7 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       );
       await expect(alice.locator("#connected")).toHaveText("false");
       await expect(bob.locator("#people .person-alice")).toHaveCount(0);
+      await expect(aliceCursor).toHaveCount(0);
       await expect(alice.locator("#people .person")).toHaveCount(1);
       await expect(alice.locator("#people .person-alice small")).toHaveText(
         "Offline",
@@ -242,10 +298,18 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       const final = await state(bob);
       await expect.poll(() => state(alice)).toEqual(final);
       await expect.poll(() => state(viewer)).toEqual(final);
+      await select(viewer, "src/README.md");
+      await note(viewer).hover();
+      await expect(
+        bob.locator(".remote-pointer.person-viewer .remote-cursor"),
+      ).toBeVisible();
       await contexts[2].close();
       for (const page of [alice, bob]) {
         await expect(page.locator("#people .person")).toHaveCount(2);
         await expect(page.locator("#people .person-viewer")).toHaveCount(0);
+        await expect(page.locator(".remote-pointer.person-viewer")).toHaveCount(
+          0,
+        );
       }
       expect(errors).toEqual([]);
     } finally {

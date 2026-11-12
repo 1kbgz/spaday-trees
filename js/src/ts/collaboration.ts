@@ -1,3 +1,5 @@
+import { connectPointers } from "./collaboration-pointers.js";
+
 // Example-only adapter: reuse the page's managed transports connection.
 interface AwarenessUpdate {
   id: number;
@@ -19,6 +21,7 @@ interface WireDetail {
   };
 }
 interface Presence {
+  pointer?: unknown;
   user: string;
   record: string | null;
   field: string | null;
@@ -31,6 +34,7 @@ function presence(value: unknown): Presence | null {
   if (typeof state.user !== "string" || !users.has(state.user)) return null;
   return {
     user: state.user,
+    pointer: state.pointer,
     record: typeof state.record === "string" ? state.record : null,
     field:
       state.field === "Title" || state.field === "Note" ? state.field : null,
@@ -64,7 +68,7 @@ document.addEventListener("spaday:wire-client", (event) => {
         input.closest(".editor")?.getAttribute("data-record-id") === record
           ? input.getAttribute("aria-label")
           : null;
-      return { user, record, field };
+      return { user, record, field, pointer: pointers.current() };
     };
     const person = (state: Presence, local = false) => {
       const record = records().some((row) => row.id === state.record)
@@ -87,6 +91,19 @@ document.addEventListener("spaday:wire-client", (event) => {
       };
     };
     const render = () => {
+      pointers.render(
+        [...peers].flatMap(([peer, value]) => {
+          const state = presence(value);
+          return state &&
+            records().some(
+              (row) =>
+                row.id ===
+                (state.pointer as { record?: unknown } | null)?.record,
+            )
+            ? [{ peer, user: state.user, pointer: state.pointer }]
+            : [];
+        }),
+      );
       const others = [...peers.values()].flatMap((value) => {
         const state = presence(value);
         return state ? [person(state)] : [];
@@ -119,6 +136,20 @@ document.addEventListener("spaday:wire-client", (event) => {
       }
       render();
     };
+    const pointers = connectPointers(
+      () =>
+        Array.from(
+          document
+            .querySelector("#records file-tree-container")
+            ?.shadowRoot?.querySelectorAll("[data-item-path]") ?? [],
+        ).map((element) => ({
+          element,
+          record: element.getAttribute("data-item-path") ?? "",
+          field: null,
+        })),
+      publish,
+      (cursors) => store.set("cursors", cursors),
+    );
     const focus = () => queueMicrotask(publish);
     const stops = [
       client.onAwareness((update) => {
@@ -141,6 +172,7 @@ document.addEventListener("spaday:wire-client", (event) => {
     publish();
     stopModel = () => {
       active = false;
+      pointers.disconnect();
       stops.forEach((stop) => stop());
       document.removeEventListener("focusin", focus);
       document.removeEventListener("focusout", focus);

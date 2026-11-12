@@ -111,3 +111,10 @@ listens for `spaday:wire-client` and uses the existing client's awareness API to
 focus. Awareness is separate from CRDT records, clears on disconnect or page navigation, and
 republishes on reconnect or restoration from the browser’s back/forward cache.
 No additional WebSocket or durable presence fields are needed.
+
+Move the mouse over a record row or a title/note input to show a labeled cursor and target outline
+in the other browser. Positions are relative to that record's row or field, so different window
+sizes and scroll positions remain aligned. A cursor disappears when its target is hidden, deleted,
+or outside the visible viewport, or when its sender leaves the target, blurs, or disconnects.
+The pointer layer does not capture clicks. Mouse updates are coalesced to at most 25 per second;
+keyboard focus is still shown in the people list.

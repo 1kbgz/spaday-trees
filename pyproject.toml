@@ -39,8 +39,9 @@ trees = "spaday_trees:package"
 [project.optional-dependencies]
 examples = [
     "pydantic>=2",
+    "spaday>=0.14,<1",
     "starlette",
-    "transports",
+    "transports>=0.12.2,<0.13",
     "uvicorn",
     "websockets",
 ]
@@ -55,12 +56,13 @@ develop = [
     "mdformat",
     "mdformat-myst",
     "mdformat-tables>=1",
+    "pydantic>=2",
     "pytest",
     "pytest-cov",
-    "pydantic>=2",
     "ruff",
+    "spaday>=0.14,<1",
     "starlette",
-    "transports",
+    "transports>=0.12.2,<0.13",
     "twine",
     "ty",
     "uv",

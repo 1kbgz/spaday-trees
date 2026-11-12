@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../_static/fonts/fuma-fonts.css?v=c2892c73" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/custom.css?v=88c24c6a" />
     <script src="../../_static/documentation_options.js?v=e259d695"></script>
@@ -21,7 +21,7 @@
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../_static/design-tabs.js?v=fcb327ea"></script>
     <script data-searchlite-index="searchlite-index.json" defer="defer" src="../../_static/searchlite.js?v=a5320898"></script>
     <script defer="defer" src="../../_static/fuma.js?v=9c325f6c"></script>
     <script src="../../_static/js/custom.js?v=956e5d78"></script>
@@ -130,6 +130,9 @@
   <li class="fd-toc-item" data-depth="1">
     <a href="#display-git-status">Display Git status</a>
   </li>
+  <li class="fd-toc-item" data-depth="1">
+    <a href="#edit-shared-records">Edit shared records</a>
+  </li>
 </ul>
 </div>
   </div>
@@ -196,6 +199,39 @@ endpoint action can send either payload to Python:</p>
 </div>
 <p>Supported statuses are <code class="docutils literal notranslate"><span class="pre">added</span></code>, <code class="docutils literal notranslate"><span class="pre">deleted</span></code>, <code class="docutils literal notranslate"><span class="pre">ignored</span></code>, <code class="docutils literal notranslate"><span class="pre">modified</span></code>, <code class="docutils literal notranslate"><span class="pre">renamed</span></code>, and <code class="docutils literal notranslate"><span class="pre">untracked</span></code>.</p>
 </section>
+<section id="edit-shared-records">
+<h2>Edit shared records<a class="headerlink" href="#edit-shared-records" title="Link to this heading">¶</a></h2>
+<p>Install the example dependencies and start the <a class="reference download internal" download="" href="../../_downloads/2b77d717ffd205e451dfed8728b750f3/collaboration.py"><span class="xref download myst">collaborative example</span></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[examples]"</span>
+python<span class="w"> </span>-m<span class="w"> </span>spaday_trees.collaboration
+</pre></div>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8043</span></code> as Alice, <code class="docutils literal notranslate"><span class="pre">/bob</span></code> in another tab, and <code class="docutils literal notranslate"><span class="pre">/viewer</span></code> for read-only access.
+Edit a title as Alice and its note as Bob: both fields converge in all three tabs. Select a different
+record as Bob to verify that selection stays local. Delete <code class="docutils literal notranslate"><span class="pre">docs/README.md</span></code> to remove that record
+from every tab while keeping <code class="docutils literal notranslate"><span class="pre">src/README.md</span></code> and its edits.</p>
+<p>To adapt this example:</p>
+<ul class="simple">
+<li><p>Keep a stable, unique <code class="docutils literal notranslate"><span class="pre">id</span></code> on each record. Declare <code class="docutils literal notranslate"><span class="pre">records</span></code> as a CRDT keyed set and <code class="docutils literal notranslate"><span class="pre">details</span></code> as a
+nested map. Set iteration order is not a record identity or a persisted display order.</p></li>
+<li><p>Render editors with <code class="docutils literal notranslate"><span class="pre">Each(...,</span> <span class="pre">field=&quot;board.records&quot;,</span> <span class="pre">key=&quot;id&quot;)</span></code>. Bind inputs to <code class="docutils literal notranslate"><span class="pre">item(&quot;title&quot;)</span></code>
+and <code class="docutils literal notranslate"><span class="pre">item(&quot;details.note&quot;)</span></code> in two-way mode. These writes target the record identity after another
+record is deleted or the collection order changes.</p></li>
+<li><p>Keep selection in the page’s local <code class="docutils literal notranslate"><span class="pre">store</span></code>, outside the <code class="docutils literal notranslate"><span class="pre">board</span></code> wire namespace.</p></li>
+<li><p>Apply deletion on the server using the submitted ID and a fresh CRDT snapshot. Diff that snapshot
+and pass its operations to <code class="docutils literal notranslate"><span class="pre">hub.mutate_shared_crdt()</span></code>. A repeated deletion returns 404.</p></li>
+<li><p>Grant <code class="docutils literal notranslate"><span class="pre">WRITE</span></code> only to editors on the Hub and check the same role in the HTTP deletion endpoint.
+Replace URL-selected demo roles with authenticated identities before deployment.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Wire(reconnect=True)</span></code> replays queued field edits after a temporary disconnect. To try this, take
+Alice’s tab offline, edit its title, change Bob’s note, then reconnect Alice. Both changes should
+appear. Deletion uses an HTTP request and requires a connection; it is not queued offline.
+The example keeps data in memory, so restarting the server resets it.</p>
+<p>Keep full file paths as record IDs, so identical filenames in different directories remain distinct.
+<code class="docutils literal notranslate"><span class="pre">Tree.paths</span></code> receives a path projection from the shared records; the deletion endpoint updates both
+in one CRDT mutation. Selection binds through <code class="docutils literal notranslate"><span class="pre">selected_paths</span></code> and <code class="docutils literal notranslate"><span class="pre">selection-change</span></code>. The metadata
+form edits titles and notes; this example does not rename files or persist drag-and-drop moves.</p>
+</section>
 </section>
 
 
@@ -242,6 +278,9 @@ endpoint action can send either payload to Python:</p>
   </li>
   <li class="fd-toc-item" data-depth="1">
     <a href="#display-git-status">Display Git status</a>
+  </li>
+  <li class="fd-toc-item" data-depth="1">
+    <a href="#edit-shared-records">Edit shared records</a>
   </li>
 </ul>
 

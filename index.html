@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="_static/fonts/fuma-fonts.css?v=c2892c73" />
     <link rel="stylesheet" type="text/css" href="_static/styles/custom.css?v=88c24c6a" />
     <script src="_static/documentation_options.js?v=e259d695"></script>
@@ -21,7 +21,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
     <script data-searchlite-index="searchlite-index.json" defer="defer" src="_static/searchlite.js?v=a5320898"></script>
     <script defer="defer" src="_static/fuma.js?v=9c325f6c"></script>
     <script src="_static/js/custom.js?v=956e5d78"></script>
@@ -250,6 +250,15 @@ python<span class="w"> </span>-m<span class="w"> </span>spaday_trees.example
 server path updates, selection, built-in search, Git status, responsive styling, and client events logged
 by Python. It passes the local package descriptor directly, so it does not install or resolve the
 integration from GitHub.</p>
+<p>To edit shared file metadata in multiple tabs, run the
+<a class="reference download internal" download="" href="_downloads/2b77d717ffd205e451dfed8728b750f3/collaboration.py"><span class="xref download myst">collaborative example</span></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>spaday_trees.collaboration
+</pre></div>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8043</span></code> and use the Alice, Bob, and Viewer links. Alice and Bob can edit or
+delete records; Viewer receives changes with read-only access. Selection stays local to each tab.
+This example requires Spaday 0.14 and a Python server. See the
+<a class="reference internal" href="docs/src/how-to.html#edit-shared-records"><span class="std std-ref">collaboration recipe</span></a> for bindings, permissions, and reconnect behavior.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>

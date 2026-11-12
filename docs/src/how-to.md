@@ -100,3 +100,12 @@ Keep full file paths as record IDs, so identical filenames in different director
 `Tree.paths` receives a path projection from the shared records; the deletion endpoint updates both
 in one CRDT mutation. Selection binds through `selected_paths` and `selection-change`. The metadata
 form edits titles and notes; this example does not rename files or persist drag-and-drop moves.
+
+The people list shows connected users, their selected records, and the title or note field they have
+focused. Viewer appears with read-only activity. Names and colors belong to this example; the demo
+roles still come from its URLs.
+
+The Python page renders the indicators from local `people` state. Its small `collaboration.ts` adapter
+listens for `spaday:wire-client` and uses the existing client's awareness API to publish selection and
+focus. Awareness is separate from CRDT records, clears on disconnect, and republishes on reconnect.
+No additional WebSocket or durable presence fields are needed.

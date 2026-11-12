@@ -41,6 +41,13 @@ STYLE = """
   --spa-text: #e4ebef; --spa-muted: #a7bbc7; --spa-border: #344854; --spa-accent: #8bcde5; }
 body { margin: 0; background: #101820; color: #e4ebef; font: 16px system-ui; }
 main { max-width: 70rem; margin: auto; padding: 2rem; }
+.people { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+.person { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; border: 1px solid #344854; border-radius: .5rem; }
+.person-alice { --person-color: #f4a261; }
+.person-bob { --person-color: #90c2ff; }
+.person-viewer { --person-color: #a7d9a4; }
+.avatar { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--person-color); color: #101820; font-weight: 700; }
+.person small { display: block; color: #a7bbc7; margin-top: .2rem; }
 nav { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
 a { color: #8bcde5; }
 .workspace { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); gap: 1.5rem; }
@@ -73,6 +80,11 @@ def page(user: str):
         .compute("hidden", not_(eq(item("id"), field("selected"))))
         .compute("data-record-id", item("id"))
     )
+    person = element(
+        "div",
+        element("span", class_="avatar", **{"aria-hidden": "true"}).compute("textContent", item("initial")),
+        element("div", element("strong").compute("textContent", item("name")), element("small").compute("textContent", item("status"))),
+    ).compute("className", item("className"))
     browser = (
         Tree(id="records", style="height: 18rem;")
         .bind("paths", "board.paths")
@@ -85,6 +97,7 @@ def page(user: str):
         element("nav", *(element("a", name.title(), href=path) for path, name in (("/", "alice"), ("/bob", "bob"), ("/viewer", "viewer")))),
         element("p").text("Select a record to edit its title or note. Selection stays in this tab; edits are shared."),
         element("p").text(f"Signed in as {user}: {'read only' if readonly else 'can edit and delete'}. Demo roles are selected by URL."),
+        element("section", Each(person, field="people", key="peer"), id="people", class_="people", **{"aria-label": "People in this document"}),
         element("p", "Connected: ", element("output", id="connected").bind("textContent", "board.connected")),
         element("div", element("section", browser, class_="browser"), Each(editor, field="board.records", key="id"), class_="workspace"),
         element("output", id="edit-error").bind("textContent", "$errors.board.records"),
@@ -133,9 +146,10 @@ def create_app(*, codec: str = "json"):
             lambda user=user: page(user),
             packages=[package],
             wire=Wire(f"/ws?user={user}", model=model, namespace="board", codec=codec, reconnect=True),
-            store={"selected": RECORDS[0]["id"]},
+            store={"selected": RECORDS[0]["id"], "user": user, "people": []},
             title="Collaborative file metadata",
             styles=[STYLE],
+            scripts=["/components/trees/cdn/collaboration.js"],
         )
         for path, user in (("/", "alice"), ("/bob", "bob"), ("/viewer", "viewer"))
     }

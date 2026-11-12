@@ -65,6 +65,12 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         pages.push(page);
       }
       const [alice, bob, viewer] = pages;
+      for (const page of pages) {
+        await expect(page.locator("#people .person")).toHaveCount(3);
+        await expect(page.locator("#people")).toContainText("Alice");
+        await expect(page.locator("#people")).toContainText("Bob");
+        await expect(page.locator("#people")).toContainText("Viewer");
+      }
       const title = (page) =>
         page.getByRole("textbox", { name: "Title", exact: true });
       const note = (page) =>
@@ -88,8 +94,17 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         await expect(title(page)).toHaveValue("Shared title");
         await expect(note(page)).toHaveValue("Shared note");
       }
+      await expect(bob.locator("#people .person-alice small")).toHaveText(
+        "Editing title · docs/README.md",
+      );
+      await expect(alice.locator("#people .person-bob small")).toHaveText(
+        "Editing note · docs/README.md",
+      );
       await select(bob, "src/README.md");
       await title(bob).fill("Source edit");
+      await expect(alice.locator("#people .person-bob small")).toHaveText(
+        "Editing title · src/README.md",
+      );
       await expect(title(alice)).toHaveValue("Shared title");
       await expect(title(viewer)).toHaveValue("Shared title");
       await expect(
@@ -116,10 +131,17 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         demoSockets.forEach((socket) => socket.close()),
       );
       await expect(alice.locator("#connected")).toHaveText("false");
+      await expect(bob.locator("#people .person-alice")).toHaveCount(0);
+      await expect(alice.locator("#people .person")).toHaveCount(1);
+      await expect(alice.locator("#people .person-alice small")).toHaveText(
+        "Offline",
+      );
       await title(alice).fill("Offline title");
       await note(bob).fill("While disconnected");
       await contexts[0].setOffline(false);
       await expect(alice.locator("#connected")).toHaveText("true");
+      for (const page of pages)
+        await expect(page.locator("#people .person")).toHaveCount(3);
       for (const page of pages) {
         await expect(title(page)).toHaveValue("Offline title");
         await expect(note(page)).toHaveValue("While disconnected");
@@ -174,6 +196,11 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       const final = await state(bob);
       await expect.poll(() => state(alice)).toEqual(final);
       await expect.poll(() => state(viewer)).toEqual(final);
+      await contexts[2].close();
+      for (const page of [alice, bob]) {
+        await expect(page.locator("#people .person")).toHaveCount(2);
+        await expect(page.locator("#people .person-viewer")).toHaveCount(0);
+      }
       expect(errors).toEqual([]);
     } finally {
       await Promise.allSettled(contexts.map((context) => context.close()));

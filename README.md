@@ -130,6 +130,7 @@ python -m spaday_trees.collaboration
 
 Open `http://127.0.0.1:8043` and use the Alice, Bob, and Viewer links. Alice and Bob can edit or
 delete records; Viewer receives changes with read-only access. Selection stays local to each tab.
+The people list shows names, colors, selected records, and which field someone is editing.
 This example requires Spaday 0.14 and a Python server. See the
 [collaboration recipe](docs/src/how-to.md#edit-shared-records) for bindings, permissions, and reconnect behavior.
 

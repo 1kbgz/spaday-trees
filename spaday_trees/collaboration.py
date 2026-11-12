@@ -97,7 +97,7 @@ def page(user: str):
         element("nav", *(element("a", name.title(), href=path) for path, name in (("/", "alice"), ("/bob", "bob"), ("/viewer", "viewer")))),
         element("p").text("Select a record to edit its title or note. Selection stays in this tab; edits are shared."),
         element("p").text(f"Signed in as {user}: {'read only' if readonly else 'can edit and delete'}. Demo roles are selected by URL."),
-        element("section", Each(person, field="people", key="peer"), id="people", class_="people", **{"aria-label": "People in this document"}),
+        element("section", Each(person, field="people", key="user"), id="people", class_="people", **{"aria-label": "People in this document"}),
         element("p", "Connected: ", element("output", id="connected").bind("textContent", "board.connected")),
         element("div", element("section", browser, class_="browser"), Each(editor, field="board.records", key="id"), class_="workspace"),
         element("output", id="edit-error").bind("textContent", "$errors.board.records"),

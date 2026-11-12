@@ -42,6 +42,9 @@ document.addEventListener("spaday:wire-client", (event) => {
     .detail;
   if (namespace !== "board") return;
   let stopModel = () => {};
+  let suspend = () => {};
+  let resume = () => {};
+  let hidden = false;
   const stopLink = link.onModel((id) => {
     stopModel();
     const user = String(store.get("user"));
@@ -63,12 +66,12 @@ document.addEventListener("spaday:wire-client", (event) => {
           : null;
       return { user, record, field };
     };
-    const person = (peer: string, state: Presence, local = false) => {
+    const person = (state: Presence, local = false) => {
       const record = records().some((row) => row.id === state.record)
         ? state.record
         : null;
       return {
-        peer,
+        user: state.user,
         name:
           state.user[0].toUpperCase() +
           state.user.slice(1) +
@@ -84,16 +87,30 @@ document.addEventListener("spaday:wire-client", (event) => {
       };
     };
     const render = () => {
-      const others = [...peers].flatMap(([peer, value]) => {
+      const others = [...peers.values()].flatMap((value) => {
         const state = presence(value);
-        return state ? [person(peer, state)] : [];
+        return state ? [person(state)] : [];
       });
-      store.set("people", [person("self", current(), true), ...others]);
+      const groups = new Map<string, ReturnType<typeof person>[]>();
+      for (const entry of [person(current(), true), ...others]) {
+        const group = groups.get(entry.user) ?? [];
+        group.push(entry);
+        groups.set(entry.user, group);
+      }
+      store.set(
+        "people",
+        [...groups.values()].map((group) => ({
+          ...group[0],
+          name:
+            group[0].name + (group.length > 1 ? ` · ${group.length} tabs` : ""),
+          status: [...new Set(group.map((entry) => entry.status))].join("; "),
+        })),
+      );
     };
     let active = true;
     let last = "";
     const publish = () => {
-      if (!active) return;
+      if (!active || hidden) return;
       const state = current();
       const encoded = JSON.stringify(state);
       if (encoded !== last) {
@@ -116,6 +133,11 @@ document.addEventListener("spaday:wire-client", (event) => {
     ];
     document.addEventListener("focusin", focus);
     document.addEventListener("focusout", focus);
+    suspend = () => client.setAwareness(id, null);
+    resume = () => {
+      last = "";
+      publish();
+    };
     publish();
     stopModel = () => {
       active = false;
@@ -126,8 +148,16 @@ document.addEventListener("spaday:wire-client", (event) => {
     };
   });
   window.addEventListener("pagehide", (event) => {
-    if (event.persisted) return;
-    stopLink();
-    stopModel();
+    hidden = true;
+    suspend();
+    if (!event.persisted) {
+      stopLink();
+      stopModel();
+    }
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    hidden = false;
+    resume();
   });
 });

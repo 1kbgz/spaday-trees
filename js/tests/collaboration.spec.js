@@ -71,6 +71,52 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         await expect(page.locator("#people")).toContainText("Bob");
         await expect(page.locator("#people")).toContainText("Viewer");
       }
+      const visitor = await contexts[0].newPage();
+      visitor.on("pageerror", (error) => errors.push(String(error)));
+      await visitor.goto(origin);
+      await expect(alice.locator("#people .person-alice strong")).toHaveText(
+        "Alice (you) · 2 tabs",
+      );
+      await expect(alice.locator("#people .person")).toHaveCount(3);
+      await visitor.getByRole("link", { name: "Bob", exact: true }).click();
+      await expect(alice.locator("#people .person-bob strong")).toHaveText(
+        "Bob · 2 tabs",
+      );
+      await expect(alice.locator("#people .person-alice strong")).toHaveText(
+        "Alice (you)",
+      );
+      await visitor.getByRole("link", { name: "Alice", exact: true }).click();
+      await expect(alice.locator("#people .person-alice strong")).toHaveText(
+        "Alice (you) · 2 tabs",
+      );
+      await expect(alice.locator("#people .person-bob strong")).toHaveText(
+        "Bob",
+      );
+      await visitor.close();
+      await expect(alice.locator("#people .person-alice strong")).toHaveText(
+        "Alice (you)",
+      );
+      // Cached pages can remain alive without closing their WebSocket.
+      await alice.evaluate(() =>
+        window.dispatchEvent(
+          new PageTransitionEvent("pagehide", { persisted: true }),
+        ),
+      );
+      await expect(bob.locator("#people .person-alice")).toHaveCount(0);
+      await alice.evaluate(() => window.dispatchEvent(new Event("focusin")));
+      await bob
+        .getByRole("textbox", { name: "Note", exact: true })
+        .fill("While Alice is cached");
+      await expect(
+        alice.getByRole("textbox", { name: "Note", exact: true }),
+      ).toHaveValue("While Alice is cached");
+      await expect(bob.locator("#people .person-alice")).toHaveCount(0);
+      await alice.evaluate(() =>
+        window.dispatchEvent(
+          new PageTransitionEvent("pageshow", { persisted: true }),
+        ),
+      );
+      await expect(bob.locator("#people .person-alice")).toHaveCount(1);
       const title = (page) =>
         page.getByRole("textbox", { name: "Title", exact: true });
       const note = (page) =>

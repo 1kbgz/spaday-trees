@@ -106,7 +106,7 @@ focused. Multiple tabs for the same user share one indicator with a tab count an
 Viewer appears with read-only activity. Names and colors belong to this example; the demo
 roles still come from its URLs.
 
-The Python page renders the indicators from local `people` state. Its small `collaboration.ts` adapter
+The Python page renders the indicators from local `people` state. Its small `js/examples/collaboration.js` adapter
 reads and writes local store fields. The Python `Wire.awareness` configuration publishes selection
 and focus in the `activity` scope and receives remote state over the existing connection. Awareness is separate from CRDT records, clears on disconnect or page navigation, and
 republishes on reconnect or restoration from the browser’s back/forward cache.
@@ -118,3 +118,7 @@ sizes and scroll positions remain aligned. A cursor disappears when its target i
 or outside the visible viewport, or when its sender leaves the target, blurs, or disconnects.
 The pointer layer does not capture clicks. Mouse updates are coalesced to at most 25 per second;
 keyboard focus is still shown in the people list.
+
+## Shared pointer display
+
+The collaboration example uses [spaday-collab](https://github.com/1kbgz/spaday-collab) for pointer tracking and hover outlines. Install the `examples` extra to include it. Its adapter in `js/examples/collaboration.js` supplies component identity and geometry; names, colors, roles, and tab grouping remain example settings. Ordinary component use does not require spaday-collab.

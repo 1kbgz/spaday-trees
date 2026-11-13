@@ -1,26 +1,45 @@
-import type { SpadayTree } from "./index.js";
-import { connectPointers } from "./collaboration-pointers.js";
+import { elementGeometry } from "/components/collab/cdn/index.js";
 
-// Example-only adapter: reuse the page's managed transports connection.
-interface WireDetail {
-  namespace: string | null;
-  store: {
-    get(field: string): unknown;
-    set(field: string, value: unknown): void;
-    subscribe(field: string, callback: () => void): () => void;
+// Only target identity and component geometry are specific to this example.
+function targets() {
+  const inputs = () =>
+    Array.from(document.querySelectorAll(".editor:not([hidden]) input"));
+  const key = (record, field = null) => JSON.stringify([record, field]);
+  const inputKey = (el) =>
+    key(el.closest(".editor").dataset.recordId, el.getAttribute("aria-label"));
+  const tree = () => document.querySelector("#records");
+  return {
+    hitTest(x, y) {
+      const input = inputs().find((el) => elementGeometry(el).hit(x, y));
+      if (input) return inputKey(input);
+      const path = tree().getItemAtPoint(x, y);
+      return path === undefined ? null : key(path);
+    },
+    resolve(id) {
+      const input = inputs().find((el) => inputKey(el) === id);
+      if (input) return elementGeometry(input);
+      // Compare against known paths; peer-supplied IDs are never parsed or queried as selectors.
+      const path = tree().paths.find((path) => key(path) === id);
+      if (path === undefined) return undefined;
+      const bounds = tree().getItemBounds(path);
+      return (
+        bounds && {
+          ...bounds,
+          hit: (x, y) => tree().getItemAtPoint(x, y) === path,
+        }
+      );
+    },
+    roots: () =>
+      [
+        document.querySelector("main"),
+        document.querySelector("#records file-tree-container")?.shadowRoot,
+      ].filter(Boolean),
   };
 }
-interface Presence {
-  pointer?: unknown;
-  user: string;
-  record: string | null;
-  field: string | null;
-}
-const users = new Set(["alice", "bob", "viewer"]);
-
-function presence(value: unknown): Presence | null {
+const users = /* @__PURE__ */ new Set(["alice", "bob", "viewer"]);
+function presence(value) {
   if (!value || typeof value !== "object") return null;
-  const state = value as Partial<Presence>;
+  const state = value;
   if (typeof state.user !== "string" || !users.has(state.user)) return null;
   return {
     user: state.user,
@@ -30,22 +49,20 @@ function presence(value: unknown): Presence | null {
       state.field === "Title" || state.field === "Note" ? state.field : null,
   };
 }
-
 document.addEventListener("spaday:wire-client", (event) => {
-  const { namespace, store } = (event as CustomEvent<WireDetail>).detail;
+  const { namespace, store } = event.detail;
   if (namespace !== "board") return;
   const user = String(store.get("user"));
   if (!users.has(user)) return;
   const peers = () =>
     new Map(
-      (
-        (store.get("remote_activity") as { peer: string; state: unknown }[]) ??
-        []
-      ).map(({ peer, state }) => [peer, state]),
+      (store.get("remote_activity") ?? []).map(({ peer, state }) => [
+        peer,
+        state,
+      ]),
     );
-  const records = () =>
-    (store.get("board.records") as { id: string }[] | undefined) ?? [];
-  const current = (): Presence => {
+  const records = () => store.get("board.records") ?? [];
+  const current = () => {
     const selected = store.get("selected");
     const record = records().some((row) => row.id === selected)
       ? String(selected)
@@ -58,9 +75,9 @@ document.addEventListener("spaday:wire-client", (event) => {
       input.closest(".editor")?.getAttribute("data-record-id") === record
         ? input.getAttribute("aria-label")
         : null;
-    return { user, record, field, pointer: pointers.current() };
+    return { user, record, field, pointer: store.get("pointer") };
   };
-  const person = (state: Presence, local = false) => {
+  const person = (state, local = false) => {
     const record = records().some((row) => row.id === state.record)
       ? state.record
       : null;
@@ -76,21 +93,27 @@ document.addEventListener("spaday:wire-client", (event) => {
         local && !store.get("board.connected")
           ? "Offline"
           : record
-            ? `${state.field && state.user !== "viewer" ? `Editing ${state.field.toLowerCase()}` : "Viewing"} · ${record}`
+            ? `${state.field && state.user !== "viewer" ? `Editing ${state.field.toLowerCase()}` : "Viewing"} \xB7 ${record}`
             : "Choosing a record",
     };
   };
   let lastPeople = "";
   const render = () => {
-    pointers.render(
+    store.set(
+      "cursors",
       [...peers()].flatMap(([peer, value]) => {
         const state = presence(value);
-        return state &&
-          records().some(
-            (row) =>
-              row.id === (state.pointer as { record?: unknown } | null)?.record,
-          )
-          ? [{ peer, user: state.user, pointer: state.pointer }]
+        return state
+          ? [
+              {
+                peer,
+                pointer: state.pointer,
+                label: state.user[0].toUpperCase() + state.user.slice(1),
+                color: { alice: "#f4a261", bob: "#90c2ff", viewer: "#a7d9a4" }[
+                  state.user
+                ],
+              },
+            ]
           : [];
       }),
     );
@@ -98,7 +121,7 @@ document.addEventListener("spaday:wire-client", (event) => {
       const state = presence(value);
       return state ? [person(state)] : [];
     });
-    const groups = new Map<string, ReturnType<typeof person>[]>();
+    const groups = /* @__PURE__ */ new Map();
     for (const entry of [person(current(), true), ...others]) {
       const group = groups.get(entry.user) ?? [];
       group.push(entry);
@@ -106,7 +129,8 @@ document.addEventListener("spaday:wire-client", (event) => {
     }
     const people = [...groups.values()].map((group) => ({
       ...group[0],
-      name: group[0].name + (group.length > 1 ? ` · ${group.length} tabs` : ""),
+      name:
+        group[0].name + (group.length > 1 ? ` \xB7 ${group.length} tabs` : ""),
       status: [...new Set(group.map((entry) => entry.status))].join("; "),
     }));
     const encodedPeople = JSON.stringify(people);
@@ -127,14 +151,16 @@ document.addEventListener("spaday:wire-client", (event) => {
     }
     render();
   };
-  const pointers = connectPointers(
-    () => document.querySelector<SpadayTree>("#records"),
-    publish,
-    (cursors) => store.set("cursors", cursors),
-  );
+  queueMicrotask(() => {
+    if (active)
+      Object.assign(document.querySelector("spaday-pointers"), {
+        adapter: targets(),
+      });
+  });
   const focus = () => queueMicrotask(publish);
   const stops = [
     store.subscribe("remote_activity", render),
+    store.subscribe("pointer", publish),
     store.subscribe("selected", publish),
     store.subscribe("board.records", publish),
     store.subscribe("board.connected", render),
@@ -142,10 +168,9 @@ document.addEventListener("spaday:wire-client", (event) => {
   document.addEventListener("focusin", focus);
   document.addEventListener("focusout", focus);
   publish();
-  window.addEventListener("pagehide", (event) => {
-    if (event.persisted) return;
+  window.addEventListener("pagehide", (event2) => {
+    if (event2.persisted) return;
     active = false;
-    pointers.disconnect();
     stops.forEach((stop) => stop());
     document.removeEventListener("focusin", focus);
     document.removeEventListener("focusout", focus);

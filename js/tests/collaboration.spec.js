@@ -134,7 +134,7 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       await bob.setViewportSize({ width: 1000, height: 700 });
       await title(alice).hover({ position: { x: 12, y: 12 } });
       const aliceCursor = bob.locator(
-        ".remote-pointer.person-alice .remote-cursor",
+        "spaday-pointers .cursor:has-text('Alice')",
       );
       await expect(aliceCursor).toBeVisible();
       await expect(aliceCursor).toHaveText("Alice");
@@ -156,7 +156,9 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       };
       await assertCursorAt(title(bob));
       await expect(
-        bob.locator(".remote-pointer.person-alice .remote-hover"),
+        bob.locator(
+          "spaday-pointers [data-peer]:has(.label:text-is('Alice')) .hover",
+        ),
       ).toHaveCSS("pointer-events", "none");
       await title(bob).click();
       await select(bob, "src/README.md");
@@ -364,15 +366,17 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       await select(viewer, "src/README.md");
       await note(viewer).hover();
       await expect(
-        bob.locator(".remote-pointer.person-viewer .remote-cursor"),
+        bob.locator("spaday-pointers .cursor:has-text('Viewer')"),
       ).toBeVisible();
       await contexts[2].close();
       for (const page of [alice, bob]) {
         await expect(page.locator("#people .person")).toHaveCount(2);
         await expect(page.locator("#people .person-viewer")).toHaveCount(0);
-        await expect(page.locator(".remote-pointer.person-viewer")).toHaveCount(
-          0,
-        );
+        await expect(
+          page.locator(
+            "spaday-pointers [data-peer]:has(.label:text-is('Viewer'))",
+          ),
+        ).toHaveCount(0);
       }
       expect(errors).toEqual([]);
     } finally {

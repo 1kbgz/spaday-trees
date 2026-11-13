@@ -38,6 +38,7 @@ trees = "spaday_trees:package"
 
 [project.optional-dependencies]
 examples = [
+    "spaday-collab>=0.1.0,<0.2",
     "pydantic>=2",
     "spaday>=0.14.2,<1.0",
     "starlette",
@@ -46,6 +47,7 @@ examples = [
     "websockets",
 ]
 develop = [
+    "spaday-collab>=0.1.0,<0.2",
     "build",
     "bump-my-version",
     "check-dist",

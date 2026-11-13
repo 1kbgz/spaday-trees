@@ -7,7 +7,8 @@ import cpy from "cpy";
 
 const BUNDLES = [
   {
-    entryPoints: ["src/ts/collaboration.ts"],
+    entryPoints: ["examples/collaboration.js"],
+    external: ["/components/*"],
     outfile: "dist/cdn/collaboration.js",
   },
   {

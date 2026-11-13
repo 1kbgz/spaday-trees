@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from spaday import Awareness, CallEndpoint, SetField, Wire, element, eq, event_value, field, item, not_, obj
 from spaday.backends.starlette import PageSpec, build_site
 from spaday.components import Each
+from spaday_collab import Pointers, package as collab_package
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Route, WebSocketRoute
@@ -48,12 +49,6 @@ main { max-width: 70rem; margin: auto; padding: 2rem; }
 .person-viewer { --person-color: #a7d9a4; }
 .avatar { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--person-color); color: #101820; font-weight: 700; }
 .person small { display: block; color: #a7bbc7; margin-top: .2rem; }
-.remote-pointers { pointer-events: none; position: fixed; inset: 0; z-index: 1000; overflow: hidden; }
-.remote-cursor, .remote-hover { position: fixed; pointer-events: none; }
-.remote-hover { box-sizing: border-box; border: 2px solid var(--person-color); border-radius: 3px; opacity: .65; }
-.remote-cursor { display: flex; align-items: flex-start; gap: 2px; color: #101820; font-size: 12px; }
-.cursor-arrow { width: 14px; height: 20px; background: var(--person-color); clip-path: polygon(0 0, 100% 65%, 55% 68%, 40% 100%); }
-.cursor-name { margin-top: 16px; padding: 2px 6px; border-radius: 3px; background: var(--person-color); }
 nav { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
 a { color: #8bcde5; }
 .workspace { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); gap: 1.5rem; }
@@ -91,16 +86,6 @@ def page(user: str):
         element("span", class_="avatar", **{"aria-hidden": "true"}).compute("textContent", item("initial")),
         element("div", element("strong").compute("textContent", item("name")), element("small").compute("textContent", item("status"))),
     ).compute("className", item("className"))
-    cursor = element(
-        "div",
-        element("div", class_="remote-hover").compute("style", item("boxStyle")),
-        element(
-            "div",
-            element("span", class_="cursor-arrow"),
-            element("span", class_="cursor-name").compute("textContent", item("name")),
-            class_="remote-cursor",
-        ).compute("style", item("style")),
-    ).compute("className", item("className"))
     browser = (
         Tree(id="records", style="height: 18rem;")
         .bind("paths", "board.paths")
@@ -119,7 +104,7 @@ def page(user: str):
         element("output", id="edit-error").bind("textContent", "$errors.board.records"),
         element("output", id="delete-result").bind("textContent", "deletion.body.message"),
         element("details", element("summary", "Shared state"), element("pre", id="state").bind("textContent", "board.records", codec="json")),
-        element("div", Each(cursor, field="cursors", key="peer"), class_="remote-pointers", **{"aria-hidden": "true"}),
+        Pointers().bind("peers", "cursors").on("pointer-change", SetField("pointer", event_value("pointer"))),
         class_="wa-dark",
     )
 
@@ -161,7 +146,7 @@ def create_app(*, codec: str = "json"):
     pages = {
         path: PageSpec(
             lambda user=user: page(user),
-            packages=[package],
+            packages=[package, collab_package],
             wire=Wire(
                 f"/ws?user={user}",
                 model=model,

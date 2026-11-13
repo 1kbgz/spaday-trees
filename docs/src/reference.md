@@ -43,3 +43,16 @@ Pierre's `--trees-*-override` properties remain supported and take priority over
 `spaday_trees.package` is named `trees`. It serves the self-contained Pierre wrapper bundle from
 `/components/trees/cdn/index.js` when selected by `serve()`. Its `components` collection contains
 `SpadayTree`; `catalog` returns the wrapper's property, event, and slot schema.
+
+## Item geometry
+
+The browser element exposes `getItemAtPoint(x, y)`, returning a visible item path at viewport CSS
+coordinates, or `undefined` over a header, covered item, or outside the tree.
+`getItemBounds(path)` returns `{bounds, visibleBounds}` as `DOMRect` values for a rendered item.
+`visibleBounds` intersects the row with scrolling ancestors and the browser viewport. Hidden or
+unrendered paths return `undefined`. Neither method changes selection, expansion, or scroll position.
+
+`viewport-change` bubbles across shadow boundaries after internal scroll, rendered-row changes, or
+viewport resizing, coalesced per animation frame. Consumers recalculate geometry in response and
+observe their own surrounding page layout. The collaboration example uses these APIs for overlays;
+applications do not need access to Pierre's shadow DOM.

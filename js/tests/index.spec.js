@@ -595,3 +595,59 @@ test("decoration tones follow the shell palette and the package token", async ({
   );
   expect(await tone()).toBe("rgb(4, 5, 6)");
 });
+
+test("public item geometry follows clipping and scroll without changing selection", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.evaluate(() => {
+    const tree = document.createElement("spaday-tree");
+    tree.id = "geometry";
+    tree.style.height = "200px";
+    tree.paths = Array.from(
+      { length: 100 },
+      (_, i) => `${String(i).padStart(3, "0")}.txt`,
+    );
+    document.body.appendChild(tree);
+    window.viewportChanges = 0;
+    tree.addEventListener("viewport-change", () => viewportChanges++);
+  });
+  const tree = page.locator("#geometry");
+  await expect
+    .poll(() => tree.evaluate((t) => !!t.getItemBounds("000.txt")))
+    .toBe(true);
+  const original = await tree.evaluate((t) => {
+    const { bounds } = t.getItemBounds("000.txt");
+    return {
+      hit: t.getItemAtPoint(
+        bounds.x + bounds.width / 2,
+        bounds.y + bounds.height / 2,
+      ),
+      selection: t.selected_paths,
+    };
+  });
+  expect(original.hit).toBe("000.txt");
+  await tree.evaluate((t) => {
+    const root = t.querySelector("file-tree-container").shadowRoot;
+    [...root.querySelectorAll("*")].find(
+      (el) =>
+        el.scrollHeight > el.clientHeight &&
+        getComputedStyle(el).overflowY === "auto",
+    ).scrollTop = 15;
+  });
+  await expect
+    .poll(() => page.evaluate(() => viewportChanges))
+    .toBeGreaterThan(0);
+  const clipped = await tree.evaluate((t) => {
+    const b = t.getItemBounds("000.txt");
+    return b && [b.bounds.height, b.visibleBounds.height];
+  });
+  expect(clipped[1]).toBeLessThan(clipped[0]);
+  expect(
+    await tree.evaluate((t) => t.getItemBounds("not-a-path")),
+  ).toBeUndefined();
+  expect(await tree.evaluate((t) => t.selected_paths)).toEqual(
+    original.selection,
+  );
+  await tree.evaluate((t) => t.remove());
+});

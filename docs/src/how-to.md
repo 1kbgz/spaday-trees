@@ -107,8 +107,8 @@ Viewer appears with read-only activity. Names and colors belong to this example;
 roles still come from its URLs.
 
 The Python page renders the indicators from local `people` state. Its small `collaboration.ts` adapter
-listens for `spaday:wire-client` and uses the existing client's awareness API to publish selection and
-focus. Awareness is separate from CRDT records, clears on disconnect or page navigation, and
+reads and writes local store fields. The Python `Wire.awareness` configuration publishes selection
+and focus in the `activity` scope and receives remote state over the existing connection. Awareness is separate from CRDT records, clears on disconnect or page navigation, and
 republishes on reconnect or restoration from the browser’s back/forward cache.
 No additional WebSocket or durable presence fields are needed.
 

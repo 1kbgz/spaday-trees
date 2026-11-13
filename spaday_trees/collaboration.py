@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager, suppress
 from copy import deepcopy
 
 from pydantic import BaseModel, Field
-from spaday import CallEndpoint, SetField, Wire, element, eq, event_value, field, item, not_, obj
+from spaday import Awareness, CallEndpoint, SetField, Wire, element, eq, event_value, field, item, not_, obj
 from spaday.backends.starlette import PageSpec, build_site
 from spaday.components import Each
 from starlette.applications import Starlette
@@ -162,7 +162,14 @@ def create_app(*, codec: str = "json"):
         path: PageSpec(
             lambda user=user: page(user),
             packages=[package],
-            wire=Wire(f"/ws?user={user}", model=model, namespace="board", codec=codec, reconnect=True),
+            wire=Wire(
+                f"/ws?user={user}",
+                model=model,
+                namespace="board",
+                codec=codec,
+                reconnect=True,
+                awareness={"activity": Awareness(local="activity", peers="remote_activity")},
+            ),
             store={"selected": RECORDS[0]["id"], "user": user, "people": [], "cursors": []},
             title="Collaborative file metadata",
             styles=[STYLE],

@@ -106,6 +106,11 @@ const DECORATION_CSS = `
  * is a preset over the same pipeline. `expanded_paths` reflects the engine's
  * current expansion and is settable; user toggles dispatch `expansion-change`.
  */
+export interface TreeItemBounds {
+  bounds: DOMRect;
+  visibleBounds: DOMRect;
+}
+
 class SpadayTree extends HTMLElement {
   #model: FileTree | null = null;
   #paths: string[] = [];
@@ -122,6 +127,18 @@ class SpadayTree extends HTMLElement {
   #applyingSearch = false;
   #applyingExpansion = false;
   #warnedZeroHeight = false;
+  #engineRoot: ShadowRoot | null = null;
+  #viewportFrame = 0;
+  #viewportResize: ResizeObserver | null = null;
+  #viewportChanged = () => {
+    if (!this.#viewportFrame)
+      this.#viewportFrame = requestAnimationFrame(() => {
+        this.#viewportFrame = 0;
+        this.dispatchEvent(
+          new CustomEvent("viewport-change", { bubbles: true, composed: true }),
+        );
+      });
+  };
 
   connectedCallback(): void {
     if (this.#model) return;
@@ -171,6 +188,16 @@ class SpadayTree extends HTMLElement {
   }
 
   disconnectedCallback(): void {
+    this.#engineRoot?.removeEventListener(
+      "scroll",
+      this.#viewportChanged,
+      true,
+    );
+    this.#engineRoot = null;
+    this.#viewportResize?.disconnect();
+    this.#viewportResize = null;
+    cancelAnimationFrame(this.#viewportFrame);
+    this.#viewportFrame = 0;
     this.#decorationObserver?.disconnect();
     this.#decorationObserver = null;
     this.#modelSubscription?.();
@@ -178,6 +205,69 @@ class SpadayTree extends HTMLElement {
     this.#model?.unmount();
     this.#model?.cleanUp();
     this.#model = null;
+  }
+
+  /** Visible rendered bounds in viewport CSS pixels; never expands or scrolls the tree. */
+  getItemBounds(path: string): TreeItemBounds | undefined {
+    const root = this.#model?.getFileTreeContainer()?.shadowRoot;
+    if (!root) return undefined;
+    for (const row of root.querySelectorAll(
+      `[data-item-path="${CSS.escape(path)}"]`,
+    )) {
+      if (getComputedStyle(row).visibility === "hidden") continue;
+      const bounds = row.getBoundingClientRect();
+      let left = Math.max(0, bounds.left),
+        right = Math.min(innerWidth, bounds.right);
+      let top = Math.max(0, bounds.top),
+        bottom = Math.min(innerHeight, bounds.bottom);
+      let parent: Element | null = row;
+      while (parent) {
+        const tree = parent.getRootNode();
+        parent =
+          parent.parentElement ??
+          (tree instanceof ShadowRoot ? tree.host : null);
+        if (!parent) break;
+        const style = getComputedStyle(parent),
+          clip = parent.getBoundingClientRect();
+        if (style.overflowX !== "visible") {
+          left = Math.max(left, clip.left + parent.clientLeft);
+          right = Math.min(
+            right,
+            clip.left + parent.clientLeft + parent.clientWidth,
+          );
+        }
+        if (style.overflowY !== "visible") {
+          top = Math.max(top, clip.top + parent.clientTop);
+          bottom = Math.min(
+            bottom,
+            clip.top + parent.clientTop + parent.clientHeight,
+          );
+        }
+      }
+      if (right <= left || bottom <= top) continue;
+      return {
+        bounds,
+        visibleBounds: new DOMRect(left, top, right - left, bottom - top),
+      };
+    }
+    return undefined;
+  }
+
+  /** Hit-test a visible item by viewport coordinates; headers and covered rows return undefined. */
+  getItemAtPoint(x: number, y: number): string | undefined {
+    const root = this.#model?.getFileTreeContainer()?.shadowRoot;
+    if (!root || !Number.isFinite(x) || !Number.isFinite(y)) return undefined;
+    let hit = document.elementFromPoint(x, y);
+    while (hit?.shadowRoot) {
+      const inner = hit.shadowRoot.elementFromPoint(x, y);
+      if (!inner || inner === hit) break;
+      hit = inner;
+    }
+    if (hit?.getRootNode() !== root) return undefined;
+    return (
+      hit?.closest("[data-item-path]")?.getAttribute("data-item-path") ??
+      undefined
+    );
   }
 
   set paths(paths: string[]) {
@@ -191,6 +281,7 @@ class SpadayTree extends HTMLElement {
     const initialExpandedPaths = this.#currentExpandedPaths();
     this.#paths = [...nextPaths];
     this.#model?.resetPaths(this.#paths, { initialExpandedPaths });
+    this.#observeEngineRows();
     this.#applySelection();
     this.#applyRowDecorations();
     this.#warnIfZeroHeight();
@@ -443,18 +534,35 @@ class SpadayTree extends HTMLElement {
 
   #observeEngineRows(): void {
     const shadowRoot = this.#model?.getFileTreeContainer()?.shadowRoot;
-    if (!shadowRoot) return;
+    if (!shadowRoot || shadowRoot === this.#engineRoot) return;
+    this.#engineRoot?.removeEventListener(
+      "scroll",
+      this.#viewportChanged,
+      true,
+    );
+    this.#decorationObserver?.disconnect();
+    this.#viewportResize?.disconnect();
+    this.#engineRoot = shadowRoot;
     // Virtualized rows are recycled: scrolling re-creates row elements or
     // retargets an existing one's data-item-path, so watch both. Our own
-    // writes (class/title/git attributes) don't match this filter.
-    this.#decorationObserver = new MutationObserver(() =>
-      this.#applyRowDecorations(),
-    );
+    // writes only invalidate geometry; they must not rerun decoration writes.
+    this.#decorationObserver = new MutationObserver((mutations) => {
+      if (
+        mutations.some(
+          (m) => m.type === "childList" || m.attributeName === "data-item-path",
+        )
+      )
+        this.#applyRowDecorations();
+      this.#viewportChanged();
+    });
+    shadowRoot.addEventListener("scroll", this.#viewportChanged, true);
+    this.#viewportResize = new ResizeObserver(this.#viewportChanged);
+    this.#viewportResize.observe(this);
+    this.#viewportResize.observe(shadowRoot.host);
     this.#decorationObserver.observe(shadowRoot, {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ["data-item-path"],
     });
   }
 

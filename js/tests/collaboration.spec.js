@@ -181,6 +181,69 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
         document.body.style.minHeight = "";
       });
       await expect(aliceCursor).toBeVisible();
+      // A participant joining a wrapped roster moves the workspace under a stationary cursor.
+      await bob.setViewportSize({ width: 800, height: 900 });
+      await bob.addStyleTag({
+        content:
+          "#people { width: 520px; } #people .person { box-sizing: border-box; width: 250px; flex-shrink: 0; }",
+      });
+      await viewer.evaluate(() =>
+        window.dispatchEvent(
+          new PageTransitionEvent("pagehide", { persisted: true }),
+        ),
+      );
+      await expect(bob.locator("#people .person")).toHaveCount(2);
+      await aliceRow.hover();
+      await assertCursorAt(bobRow);
+      const beforeJoin = await bobRow.boundingBox();
+      await viewer.evaluate(() =>
+        window.dispatchEvent(
+          new PageTransitionEvent("pageshow", { persisted: true }),
+        ),
+      );
+      await expect(bob.locator("#people .person")).toHaveCount(3);
+      await expect
+        .poll(async () => (await bobRow.boundingBox()).y)
+        .toBeGreaterThan(beforeJoin.y + 20);
+      await assertCursorAt(bobRow);
+      // Use a real overflowing Pierre viewport, including its non-composed scroll event.
+      for (const page of [alice, bob]) {
+        await page.locator("#records").evaluate((tree) => {
+          window.originalPaths = tree.paths;
+          window.originalSelection = tree.selected_paths;
+          tree.paths = [
+            ...tree.paths,
+            ...Array.from({ length: 100 }, (_, i) => `extra/${i}.md`),
+          ];
+          tree.expanded_paths = ["docs/", "extra/"];
+          tree.selected_paths = ["docs/README.md"];
+        });
+      }
+      await aliceRow.hover();
+      await expect(aliceCursor).toBeVisible();
+      const scrollTree = (page, amount) =>
+        page.locator("#records").evaluate((tree, amount) => {
+          const root = tree.querySelector("file-tree-container").shadowRoot;
+          const viewport = [...root.querySelectorAll("*")].find(
+            (el) =>
+              el.scrollHeight > el.clientHeight &&
+              getComputedStyle(el).overflowY === "auto",
+          );
+          if (!viewport) throw new Error("Missing scrolling tree viewport");
+          viewport.scrollTop = amount;
+        }, amount);
+      await scrollTree(bob, 50);
+      await expect(aliceCursor).toHaveCount(0);
+      await scrollTree(bob, 0);
+      await expect(aliceCursor).toBeVisible();
+      await scrollTree(alice, 50);
+      await expect(aliceCursor).toHaveCount(0);
+      for (const page of [alice, bob]) {
+        await page.locator("#records").evaluate((tree) => {
+          tree.paths = originalPaths;
+          tree.selected_paths = originalSelection;
+        });
+      }
       await alice.mouse.move(5, 5);
       await expect(aliceCursor).toHaveCount(0);
       await select(bob, "docs/README.md");

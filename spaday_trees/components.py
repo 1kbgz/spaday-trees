@@ -64,7 +64,7 @@ class SpadayTree(Component):
                 description="Per-path row decorations {path: {icon?, tone?, badge?, tooltip?}}. badge (short text) or icon (Pierre icon name or {name, width?, height?}) render after the label — badge wins when both are set; tooltip becomes the row title; tone adds a spaday-tone-<tone> class to the row. Built-in tones info | success | warning | danger | muted have light/dark colors overridable via --trees-tone-* custom properties.",
             ),
         ),
-        events=("selection-change", "expansion-change", "search-change"),
+        events=("viewport-change", "selection-change", "expansion-change", "search-change"),
         slots=(),
     )
 

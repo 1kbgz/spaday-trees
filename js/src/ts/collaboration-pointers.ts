@@ -1,50 +1,59 @@
+import type { SpadayTree, TreeItemBounds } from "./index.js";
+
 interface Pointer {
   record: string;
   field: "Title" | "Note" | null;
   x: number;
   y: number;
 }
-interface Target {
-  record: string;
-  field: Pointer["field"];
-  element: Element;
-}
 
-// Cursor positions are relative to record rows or fields, never the sender's viewport.
+// Example-owned overlays use the peer's public geometry API.
 export function connectPointers(
-  rows: () => Target[],
+  tree: () => SpadayTree | null,
   changed: () => void,
   draw: (cursors: unknown[]) => void,
 ) {
   let pointer: Pointer | null = null;
+  let position: { x: number; y: number } | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let frame = 0;
   let last = "";
   let peers: { peer: string; user: string; pointer?: unknown }[] = [];
-  const targets = () => [
-    ...rows(),
-    ...Array.from(document.querySelectorAll(".editor:not([hidden]) input")).map(
-      (element) => ({
-        element,
-        record: element.closest(".editor")!.getAttribute("data-record-id")!,
-        field: element.getAttribute("aria-label") as Pointer["field"],
-      }),
+  const inputs = () => [
+    ...document.querySelectorAll<HTMLInputElement>(
+      ".editor:not([hidden]) input",
     ),
   ];
-  const visible = (element: Element) => {
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.width > 0 &&
-      rect.height > 0 &&
-      rect.bottom > 0 &&
-      rect.right > 0 &&
-      rect.top < innerHeight &&
-      rect.left < innerWidth
+  const geometry = (
+    p: Pick<Pointer, "record" | "field">,
+  ):
+    | (TreeItemBounds & { hit: (x: number, y: number) => boolean })
+    | undefined => {
+    if (p.field === null) {
+      const target = tree();
+      const bounds = target?.getItemBounds(p.record);
+      return (
+        bounds && {
+          ...bounds,
+          hit: (x, y) => target!.getItemAtPoint(x, y) === p.record,
+        }
+      );
+    }
+    const input = inputs().find(
+      (el) =>
+        el.closest(".editor")?.getAttribute("data-record-id") === p.record &&
+        el.getAttribute("aria-label") === p.field,
     );
+    if (!input) return undefined;
+    const bounds = input.getBoundingClientRect();
+    return {
+      bounds,
+      visibleBounds: bounds,
+      hit: (x, y) => document.elementFromPoint(x, y) === input,
+    };
   };
   const render = () => {
     frame = 0;
-    const candidates = targets();
     const cursors = peers.flatMap(({ peer, user, pointer: value }) => {
       if (!value || typeof value !== "object") return [];
       const p = value as Partial<Pointer>;
@@ -61,32 +70,19 @@ export function connectPointers(
         p.y > 1
       )
         return [];
-      const target = candidates.find(
-        (target) => target.record === p.record && target.field === p.field,
-      );
-      if (!target || !visible(target.element)) return [];
-      const rect = target.element.getBoundingClientRect();
-      const x = rect.left + rect.width * p.x;
-      const y = rect.top + rect.height * p.y;
-      // A virtualized/clipped row must not leave a cursor floating outside its viewport.
-      const hit = document.elementFromPoint(x, y);
-      if (
-        !hit ||
-        !(
-          hit === target.element ||
-          target.element.contains(hit) ||
-          (target.element.getRootNode() instanceof ShadowRoot &&
-            hit === (target.element.getRootNode() as ShadowRoot).host)
-        )
-      )
-        return [];
+      const target = geometry(p as Pointer);
+      if (!target) return [];
+      const { bounds, visibleBounds: box } = target;
+      const x = bounds.left + bounds.width * p.x,
+        y = bounds.top + bounds.height * p.y;
+      if (!target.hit(x, y)) return [];
       return [
         {
           peer,
           name: user[0].toUpperCase() + user.slice(1),
           className: `remote-pointer person-${user}`,
           style: `left:${x}px;top:${y}px`,
-          boxStyle: `left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px`,
+          boxStyle: `left:${box.left}px;top:${box.top}px;width:${box.width}px;height:${box.height}px`,
         },
       ];
     });
@@ -95,46 +91,20 @@ export function connectPointers(
       last = encoded;
       draw(cursors);
     }
-    observe();
+    for (const element of document.querySelectorAll(
+      "main, #people, .workspace",
+    )) {
+      if (!observed.has(element)) {
+        observed.add(element);
+        resize.observe(element);
+      }
+    }
   };
   const schedule = () => {
     if (!frame) frame = requestAnimationFrame(render);
   };
-  const observer = new MutationObserver(schedule);
-  const roots = new Set<Node>();
-  const observe = () => {
-    for (const root of [
-      document.querySelector(".workspace"),
-      document.querySelector("#records file-tree-container")?.shadowRoot,
-    ]) {
-      if (!root || roots.has(root)) continue;
-      roots.add(root);
-      observer.observe(root, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-      });
-    }
-  };
-  const move = (event: PointerEvent) => {
-    if (event.pointerType === "touch") return;
-    const path = event.composedPath();
-    const target = targets().find((target) => path.includes(target.element));
-    if (target && visible(target.element)) {
-      const rect = target.element.getBoundingClientRect();
-      pointer = {
-        record: target.record,
-        field: target.field,
-        x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
-        y: Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)),
-      };
-      if (!timer)
-        timer = setTimeout(() => {
-          timer = undefined;
-          changed();
-        }, 40);
-    } else clear();
-  };
+  const resize = new ResizeObserver(schedule);
+  const observed = new WeakSet<Element>();
   const clear = () => {
     clearTimeout(timer);
     timer = undefined;
@@ -147,9 +117,46 @@ export function connectPointers(
     clear();
     schedule();
   };
+  const move = (event: PointerEvent) => {
+    if (event.pointerType === "touch") return;
+    position = { x: event.clientX, y: event.clientY };
+    const path = tree()?.getItemAtPoint(event.clientX, event.clientY);
+    const input = inputs().find((el) => event.composedPath().includes(el));
+    const target =
+      path !== undefined
+        ? { record: path, field: null }
+        : input
+          ? {
+              record: input.closest(".editor")!.getAttribute("data-record-id")!,
+              field: input.getAttribute("aria-label") as Pointer["field"],
+            }
+          : undefined;
+    const bounds = target && geometry(target)?.bounds;
+    if (!bounds || !bounds.width || !bounds.height) {
+      clear();
+      return;
+    }
+    pointer = {
+      ...target!,
+      x: Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width)),
+      y: Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height)),
+    };
+    if (!timer)
+      timer = setTimeout(() => {
+        timer = undefined;
+        changed();
+      }, 40);
+  };
+  const viewport = (event: Event) => {
+    if (event.target !== tree()) return;
+    if (pointer && position && !geometry(pointer)?.hit(position.x, position.y))
+      clear();
+    schedule();
+  };
   const visibility = () => {
     if (document.hidden) clear();
   };
+  document.addEventListener("viewport-change", viewport);
   document.addEventListener("pointermove", move);
   document.documentElement.addEventListener("pointerleave", clear);
   document.addEventListener("scroll", layout, true);
@@ -157,7 +164,6 @@ export function connectPointers(
   window.addEventListener("resize", layout);
   window.addEventListener("blur", clear);
   window.addEventListener("pagehide", clear);
-  observe();
   return {
     current: () => pointer,
     render(values: typeof peers) {
@@ -167,7 +173,8 @@ export function connectPointers(
     disconnect() {
       clearTimeout(timer);
       cancelAnimationFrame(frame);
-      observer.disconnect();
+      resize.disconnect();
+      document.removeEventListener("viewport-change", viewport);
       document.removeEventListener("pointermove", move);
       document.documentElement.removeEventListener("pointerleave", clear);
       document.removeEventListener("scroll", layout, true);

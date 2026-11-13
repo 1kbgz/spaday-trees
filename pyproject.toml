@@ -39,9 +39,9 @@ trees = "spaday_trees:package"
 [project.optional-dependencies]
 examples = [
     "pydantic>=2",
-    "spaday>=0.14,<1",
+    "spaday>=0.14.2,<1.0",
     "starlette",
-    "transports>=0.12.2,<0.13",
+    "transports>=0.12.3,<0.13",
     "uvicorn",
     "websockets",
 ]
@@ -60,9 +60,9 @@ develop = [
     "pytest",
     "pytest-cov",
     "ruff",
-    "spaday>=0.14,<1",
+    "spaday>=0.14.2,<1.0",
     "starlette",
-    "transports>=0.12.2,<0.13",
+    "transports>=0.12.3,<0.13",
     "twine",
     "ty",
     "uv",

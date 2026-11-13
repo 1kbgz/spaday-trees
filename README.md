@@ -132,7 +132,7 @@ Open `http://127.0.0.1:8043` and use the Alice, Bob, and Viewer links. Alice and
 delete records; Viewer receives changes with read-only access. Selection stays local to each tab.
 The people list shows names, colors, selected records, and which field someone is editing.
 Remote mouse pointers have name labels and highlight the row or field under them.
-This example requires Spaday 0.14 and a Python server. See the
+This example requires Spaday 0.14.2 or newer and a Python server. See the
 [collaboration recipe](docs/src/how-to.md#edit-shared-records) for bindings, permissions, and reconnect behavior.
 
 > [!NOTE]

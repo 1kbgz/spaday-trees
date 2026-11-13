@@ -43,9 +43,33 @@
             }
           ],
           "events": [
+            {
+              "name": "viewport-change",
+              "type": { "text": "CustomEvent" },
+              "description": "Rendered items, internal scroll, or viewport size changed. Coalesced per frame; consumers should also observe their surrounding page layout."
+            },
             { "name": "selection-change", "type": { "text": "CustomEvent<{ paths: string[] }>" } },
             { "name": "expansion-change", "type": { "text": "CustomEvent<{ paths: string[] }>" } },
             { "name": "search-change", "type": { "text": "CustomEvent<{ value: string | null }>" } }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "getItemBounds",
+              "description": "Return rendered bounds and clipped visibleBounds in viewport CSS pixels, or undefined for an unrendered/hidden path. Does not reveal or select the item.",
+              "parameters": [{ "name": "path", "type": { "text": "string" } }],
+              "return": { "type": { "text": "TreeItemBounds | undefined" } }
+            },
+            {
+              "kind": "method",
+              "name": "getItemAtPoint",
+              "description": "Return the visible item path at viewport coordinates, or undefined over headers, covered rows, or outside the tree.",
+              "parameters": [
+                { "name": "x", "type": { "text": "number" } },
+                { "name": "y", "type": { "text": "number" } }
+              ],
+              "return": { "type": { "text": "string | undefined" } }
+            }
           ],
           "slots": []
         }

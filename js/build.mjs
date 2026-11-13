@@ -7,6 +7,10 @@ import cpy from "cpy";
 
 const BUNDLES = [
   {
+    entryPoints: ["src/ts/collaboration.ts"],
+    outfile: "dist/cdn/collaboration.js",
+  },
+  {
     entryPoints: ["src/ts/index.ts"],
     plugins: [node_modules_external()],
     outfile: "dist/esm/index.js",

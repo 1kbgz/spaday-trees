@@ -133,6 +133,9 @@
   <li class="fd-toc-item" data-depth="1">
     <a href="#package">package</a>
   </li>
+  <li class="fd-toc-item" data-depth="1">
+    <a href="#item-geometry">Item geometry</a>
+  </li>
 </ul>
 </div>
   </div>
@@ -215,6 +218,18 @@ scrollbar, decoration, and Git-status tokens follow the shell palette by default
 <code class="docutils literal notranslate"><span class="pre">/components/trees/cdn/index.js</span></code> when selected by <code class="docutils literal notranslate"><span class="pre">serve()</span></code>. Its <code class="docutils literal notranslate"><span class="pre">components</span></code> collection contains
 <code class="docutils literal notranslate"><span class="pre">SpadayTree</span></code>; <code class="docutils literal notranslate"><span class="pre">catalog</span></code> returns the wrapper’s property, event, and slot schema.</p>
 </section>
+<section id="item-geometry">
+<h2>Item geometry<a class="headerlink" href="#item-geometry" title="Link to this heading">¶</a></h2>
+<p>The browser element exposes <code class="docutils literal notranslate"><span class="pre">getItemAtPoint(x,</span> <span class="pre">y)</span></code>, returning a visible item path at viewport CSS
+coordinates, or <code class="docutils literal notranslate"><span class="pre">undefined</span></code> over a header, covered item, or outside the tree.
+<code class="docutils literal notranslate"><span class="pre">getItemBounds(path)</span></code> returns <code class="docutils literal notranslate"><span class="pre">{bounds,</span> <span class="pre">visibleBounds}</span></code> as <code class="docutils literal notranslate"><span class="pre">DOMRect</span></code> values for a rendered item.
+<code class="docutils literal notranslate"><span class="pre">visibleBounds</span></code> intersects the row with scrolling ancestors and the browser viewport. Hidden or
+unrendered paths return <code class="docutils literal notranslate"><span class="pre">undefined</span></code>. Neither method changes selection, expansion, or scroll position.</p>
+<p><code class="docutils literal notranslate"><span class="pre">viewport-change</span></code> bubbles across shadow boundaries after internal scroll, rendered-row changes, or
+viewport resizing, coalesced per animation frame. Consumers recalculate geometry in response and
+observe their own surrounding page layout. The collaboration example uses these APIs for overlays;
+applications do not need access to Pierre’s shadow DOM.</p>
+</section>
 </section>
 
 
@@ -264,6 +279,9 @@ scrollbar, decoration, and Git-status tokens follow the shell palette by default
   </li>
   <li class="fd-toc-item" data-depth="1">
     <a href="#package">package</a>
+  </li>
+  <li class="fd-toc-item" data-depth="1">
+    <a href="#item-geometry">Item geometry</a>
   </li>
 </ul>
 

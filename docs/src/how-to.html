@@ -231,6 +231,21 @@ The example keeps data in memory, so restarting the server resets it.</p>
 <code class="docutils literal notranslate"><span class="pre">Tree.paths</span></code> receives a path projection from the shared records; the deletion endpoint updates both
 in one CRDT mutation. Selection binds through <code class="docutils literal notranslate"><span class="pre">selected_paths</span></code> and <code class="docutils literal notranslate"><span class="pre">selection-change</span></code>. The metadata
 form edits titles and notes; this example does not rename files or persist drag-and-drop moves.</p>
+<p>The people list shows connected users, their selected records, and the title or note field they have
+focused. Multiple tabs for the same user share one indicator with a tab count and their activities.
+Viewer appears with read-only activity. Names and colors belong to this example; the demo
+roles still come from its URLs.</p>
+<p>The Python page renders the indicators from local <code class="docutils literal notranslate"><span class="pre">people</span></code> state. Its small <code class="docutils literal notranslate"><span class="pre">collaboration.ts</span></code> adapter
+reads and writes local store fields. The Python <code class="docutils literal notranslate"><span class="pre">Wire.awareness</span></code> configuration publishes selection
+and focus in the <code class="docutils literal notranslate"><span class="pre">activity</span></code> scope and receives remote state over the existing connection. Awareness is separate from CRDT records, clears on disconnect or page navigation, and
+republishes on reconnect or restoration from the browser’s back/forward cache.
+No additional WebSocket or durable presence fields are needed.</p>
+<p>Move the mouse over a record row or a title/note input to show a labeled cursor and target outline
+in the other browser. Positions are relative to that record’s row or field, so different window
+sizes and scroll positions remain aligned. A cursor disappears when its target is hidden, deleted,
+or outside the visible viewport, or when its sender leaves the target, blurs, or disconnects.
+The pointer layer does not capture clicks. Mouse updates are coalesced to at most 25 per second;
+keyboard focus is still shown in the people list.</p>
 </section>
 </section>
 

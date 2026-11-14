@@ -162,6 +162,12 @@ uvicorn.Server(uvicorn.Config(create_app(codec="${codec}"), log_level="error")).
       ).toHaveCSS("pointer-events", "none");
       await title(bob).click();
       await select(bob, "src/README.md");
+      // Remote semantic selection reports identity without changing the local selection.
+      await expect(alice.locator("#people .person-bob small")).toContainText(
+        "src/README.md",
+      );
+      await expect(title(alice)).toHaveValue("Documentation");
+      await expect(title(bob)).toHaveValue("Source");
       await expect(aliceCursor).toHaveCount(0);
       // Row identity still resolves when the two users have different forms open.
       const aliceRow = alice.locator(
